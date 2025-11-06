@@ -3,11 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (Intel8080 "Intel8080.cpp" "Intel8080.h" "CPU.h" "CPU.cpp" "CPU_Opcodes.cpp" "Opcode_Cycles.cpp" "Bit_Calcs.cpp" "Intel_8080_State.cpp" "Intel_8080_State.h")
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Intel8080 PROPERTY CXX_STANDARD 20)
-endif()
+add_executable (Intel8080 "Intel8080.cpp" "Intel8080.h" "CPU.h" "CPU.cpp" "CPU_Opcodes.cpp" "Opcode_Cycles.cpp" "Bit_Calcs.cpp" "Intel_8080_State.cpp" )
 
 Include(FetchContent)
 
@@ -19,8 +15,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(tests Intel8080Tests.cpp "CPU.h" "CPU.cpp" "CPU_Opcodes.cpp" "Opcode_Cycles.cpp" "Bit_Calcs.cpp" "Intel_8080_State.cpp" "Intel_8080_State.h")
+add_executable(tests Intel8080Tests.cpp "CPU.h" "CPU.cpp" "CPU_Opcodes.cpp" "Opcode_Cycles.cpp" "Bit_Calcs.cpp" "Intel_8080_State.cpp" )
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+set_property(TARGET Intel8080 PROPERTY CXX_STANDARD 23)
+set_property(TARGET tests PROPERTY CXX_STANDARD 23)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)

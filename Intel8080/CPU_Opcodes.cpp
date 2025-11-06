@@ -84,7 +84,7 @@ void CPU::inrH() {
 }
 
 void CPU::inrM() {
-	uint16_t location{ unsigned(H << 8) | L };
+	uint16_t location{ static_cast<uint16_t>(unsigned(H << 8) | L ) };
 	uint8_t data{ readMem(location) };
 	AuxCarry = calculateAuxCarryINR(data);
 	data++;
@@ -107,7 +107,7 @@ void CPU::dcrH() {
 }
 
 void CPU::dcrM() {
-	uint16_t location{ unsigned(H << 8) | L };
+	uint16_t location{ static_cast<uint16_t>(unsigned(H << 8) | L ) };
 	uint8_t data{ readMem(location) };
 	AuxCarry = calculateAuxCarryDCR(data);
 	data--;

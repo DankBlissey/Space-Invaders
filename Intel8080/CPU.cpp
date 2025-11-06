@@ -168,3 +168,9 @@ void CPU::status() {
 	printf("Flags - S: %d Z: %d AC: %d P: %d CY: %d\n", Sign, Zero, AuxCarry, Parity, Carry);
 	printf("Cycles: %lu\n", cycles);
 }
+
+auto CPU::tiedRegisters() const { return std::tie(pc, sp, cycles, B, C, D, E, H, L, A, Sign, Zero, AuxCarry, Parity, Carry); }
+
+bool CPU::operator==(CPU const& rhs) const { 
+	return (tiedRegisters() == rhs.tiedRegisters()); 
+}

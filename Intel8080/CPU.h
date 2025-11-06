@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <memory>
 #include <array>
+#include <tuple>
+#include <map>
 
 class CPU {
 	public:
@@ -339,11 +341,30 @@ class CPU {
 
 		void loadTestProgram(); // Load a test program into memory
 
+		uint8_t getB();
+		uint8_t getC();
+		uint8_t getD();
+		uint8_t getE();
+		uint8_t getH();
+		uint8_t getL();
+		uint8_t getA();
+
+		bool getSign();
+		bool getZero();
+		bool getAuxCarry();
+		bool getParity();
+		bool getCarry();
+
+		std::array<uint8_t, 256> getIn();
+		std::array<uint8_t, 256> getOut();
+
 		uint16_t pc;					// Program counter
 		uint16_t sp;					// Stack pointer
 		unsigned long cycles;			// Number of completed cycles
+		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
 
 	private:
+		auto tiedRegisters() const;
 		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap)
 		uint8_t B, C, D, E, H, L, A;	// General purpose registers
 		bool Sign, Zero, AuxCarry, 
