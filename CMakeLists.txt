@@ -11,6 +11,9 @@ endif()
 
 project ("SpaceInvaders")
 
+include(CTest)
+enable_testing()
+
 # Include sub-projects.
 add_subdirectory ("Intel8080")
 
