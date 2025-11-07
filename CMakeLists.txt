@@ -16,9 +16,6 @@ add_subdirectory ("Intel8080")
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(CTest)
-enable_testing()
-
 if (MSVC)
     # warning level 4
     add_compile_options(/W4 /WX /external:W3 /W44365)
