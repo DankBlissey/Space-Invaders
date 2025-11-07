@@ -22,7 +22,6 @@ set_property(TARGET Intel8080 PROPERTY CXX_STANDARD 23)
 set_property(TARGET tests PROPERTY CXX_STANDARD 23)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-include(CTest)
 include(Catch)
 
 catch_discover_tests(tests)
