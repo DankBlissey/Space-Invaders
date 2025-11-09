@@ -1,13 +1,14 @@
 #include <catch2/catch_test_macros.hpp>
-#include "CPU.h"
+#include "Intel_8080_State.cpp"
 
-unsigned int Factorial(unsigned int number) {
-    return number > 1 ? Factorial(number - 1) * number : 1;
-}
-TEST_CASE("Factorials are computed", "[factorial]") {
-    REQUIRE(Factorial(0) == 1);
-    REQUIRE(Factorial(1) == 1);
-    REQUIRE(Factorial(2) == 2);
-    REQUIRE(Factorial(3) == 6);
-    REQUIRE(Factorial(10) == 3628800);
+TEST_CASE("CMC Complement Carry", "[opcodes, carry]") {
+    CPU testCpu = CPU();
+    testCpu.init();
+    testCpu.writeMem(0x000, 0x3F);
+    testCpu.writeMem(0x001, 0x3F);
+    REQUIRE(Intel_8080_State().with_Carry(0).with_pc(0).stateEquals(testCpu));
+    testCpu.cycle();
+    REQUIRE(Intel_8080_State().with_Carry(1).with_pc(1).stateEquals(testCpu));
+    testCpu.cycle();
+    REQUIRE(Intel_8080_State().with_Carry(0).with_pc(2).stateEquals(testCpu));
 }

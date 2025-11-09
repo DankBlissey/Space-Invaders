@@ -1,5 +1,4 @@
 #include "CPU.h"
-#include <iostream>
 #include "Opcode_Cycles.cpp"
 
 // Array of function pointers for each opcode
