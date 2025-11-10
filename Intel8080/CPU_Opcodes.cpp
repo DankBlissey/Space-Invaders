@@ -18,9 +18,14 @@ void CPU::dcr(uint8_t& reg) {
 	Sign = checkSign(reg);
 }
 
+void CPU::mov(uint8_t& to, uint8_t& from) {
+	to = from;
+}
+
 // Specific pcode functions are here
 void CPU::nop() {
 	// Do nothing
+	// I mean this opcode actually, literally does nothing
 }
 
 void CPU::lxiB() {
@@ -84,7 +89,7 @@ void CPU::inrH() {
 }
 
 void CPU::inrM() {
-	uint16_t location{ static_cast<uint16_t>(unsigned(H << 8) | L ) };
+	uint16_t location{ readPairH() };
 	uint8_t data{ readMem(location) };
 	AuxCarry = calculateAuxCarryINR(data);
 	data++;
@@ -107,7 +112,7 @@ void CPU::dcrH() {
 }
 
 void CPU::dcrM() {
-	uint16_t location{ static_cast<uint16_t>(unsigned(H << 8) | L ) };
+	uint16_t location{ readPairH() };
 	uint8_t data{ readMem(location) };
 	AuxCarry = calculateAuxCarryDCR(data);
 	data--;
@@ -278,35 +283,35 @@ void CPU::movBB() {
 }
 
 void CPU::movBC() {
-	// Do nothing
+	mov(B,C);
 }
 
 void CPU::movBD() {
-	// Do nothing
+	mov(B,D);
 }
 
 void CPU::movBE() {
-	// Do nothing
+	mov(B,E);
 }
 
 void CPU::movBH() {
-	// Do nothing
+	mov(B,H);
 }
 
 void CPU::movBL() {
-	// Do nothing
+	mov(B,L);
 }
 
 void CPU::movBM() {
-	// Do nothing
+	B = readMem(readPairH());
 }
 
 void CPU::movBA() {
-	// Do nothing
+	mov(B,A);
 }
 
 void CPU::movCB() {
-	// Do nothing
+	mov(C,B);
 }
 
 void CPU::movCC() {
@@ -314,35 +319,35 @@ void CPU::movCC() {
 }
 
 void CPU::movCD() {
-	// Do nothing
+	mov(C,D);
 }
 
 void CPU::movCE() {
-	// Do nothing
+	mov(C,E);
 }
 
 void CPU::movCH() {
-	// Do nothing
+	mov(C,H);
 }
 
 void CPU::movCL() {
-	// Do nothing
+	mov(C,L);
 }
 
 void CPU::movCM() {
-	// Do nothing
+	C = readMem(readPairH());
 }
 
 void CPU::movCA() {
-	// Do nothing
+	mov(C,A);
 }
 
 void CPU::movDB() {
-	// Do nothing
+	mov(D,B);
 }
 
 void CPU::movDC() {
-	// Do nothing
+	mov(D,C);
 }
 
 void CPU::movDD() {
@@ -350,35 +355,35 @@ void CPU::movDD() {
 }
 
 void CPU::movDE() {
-	// Do nothing
+	mov(D,E);
 }
 
 void CPU::movDH() {
-	// Do nothing
+	mov(D,H);
 }
 
 void CPU::movDL() {
-	// Do nothing
+	mov(D,L);
 }
 
 void CPU::movDM() {
-	// Do nothing
+	D = readMem(readPairH());
 }
 
 void CPU::movDA() {
-	// Do nothing
+	mov(D,A);
 }
 
 void CPU::movEB() {
-	// Do nothing
+	mov(E,B);
 }
 
 void CPU::movEC() {
-	// Do nothing
+	mov(E,C);
 }
 
 void CPU::movED() {
-	// Do nothing
+	mov(E,D);
 }
 
 void CPU::movEE() {
@@ -386,35 +391,35 @@ void CPU::movEE() {
 }
 
 void CPU::movEH() {
-	// Do nothing
+	mov(E,H);
 }
 
 void CPU::movEL() {
-	// Do nothing
+	mov(E,L);
 }
 
 void CPU::movEM() {
-	// Do nothing
+	E = readMem(readPairH());
 }
 
 void CPU::movEA() {
-	// Do nothing
+	mov(E,A);
 }
 
 void CPU::movHB() {
-	// Do nothing
+	mov(H,B);
 }
 
 void CPU::movHC() {
-	// Do nothing
+	mov(H,C);
 }
 
 void CPU::movHD() {
-	// Do nothing
+	mov(H,D);
 }
 
 void CPU::movHE() {
-	// Do nothing
+	mov(H,E);
 }
 
 void CPU::movHH() {
@@ -422,35 +427,35 @@ void CPU::movHH() {
 }
 
 void CPU::movHL() {
-	// Do nothing
+	mov(H,L);
 }
 
 void CPU::movHM() {
-	// Do nothing
+	H = readMem(readPairH());
 }
 
 void CPU::movHA() {
-	// Do nothing
+	mov(H,A);
 }
 
 void CPU::movLB() {
-	// Do nothing
+	mov(L,B);
 }
 
 void CPU::movLC() {
-	// Do nothing
+	mov(L,C);
 }
 
 void CPU::movLD() {
-	// Do nothing
+	mov(L,D);
 }
 
 void CPU::movLE() {
-	// Do nothing
+	mov(L,E);
 }
 
 void CPU::movLH() {
-	// Do nothing
+	mov(L,H);
 }
 
 void CPU::movLL() {
@@ -458,67 +463,67 @@ void CPU::movLL() {
 }
 
 void CPU::movLM() {
-	// Do nothing
+	L = readMem(readPairH());
 }
 
 void CPU::movLA() {
-	// Do nothing
+	mov(L,A);
 }
 
 void CPU::movMB() {
-	// Do nothing
+	writeMem(readPairH(), B);
 }
 
 void CPU::movMC() {
-	// Do nothing
+	writeMem(readPairH(), C);
 }
 
 void CPU::movMD() {
-	// Do nothing
+	writeMem(readPairH(), D);
 }
 
 void CPU::movME() {
-	// Do nothing
+	writeMem(readPairH(), E);
 }
 
 void CPU::movMH() {
-	// Do nothing
+	writeMem(readPairH(), H);
 }
 
 void CPU::movML() {
-	// Do nothing
+	writeMem(readPairH(), L);
 }
 
 void CPU::movMA() {
-	// Do nothing
+	writeMem(readPairH(), A);
 }
 
 void CPU::movAB() {
-	// Do nothing
+	mov(A,B);
 }
 
 void CPU::movAC() {
-	// Do nothing
+	mov(A,C);
 }
 
 void CPU::movAD() {
-	// Do nothing
+	mov(A,D);
 }
 
 void CPU::movAE() {
-	// Do nothing
+	mov(A,E);
 }
 
 void CPU::movAH() {
-	// Do nothing
+	mov(A,H);
 }
 
 void CPU::movAL() {
-	// Do nothing
+	mov(A,L);
 }
 
 void CPU::movAM() {
-	// Do nothing
+	A = readMem(readPairH());
 }
 
 void CPU::movAA() {

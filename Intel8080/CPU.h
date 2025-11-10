@@ -30,6 +30,7 @@ class CPU {
 		// General opcode functions
 		void dcr(uint8_t&);
 		void inr(uint8_t&);
+		void mov(uint8_t&, uint8_t&);
 
 		// Specific Opcode functions
 		void nop();
