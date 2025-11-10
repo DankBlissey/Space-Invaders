@@ -10,7 +10,7 @@ static bool checkSign(uint8_t value) {
 static bool checkParity(uint8_t value) {
 	value ^= value >> 4;
 	value &= 0x0F;
-	return (0x6996 >> value) & 1;
+	return !((0x6996 >> value) & 1);
 }
 
 // Functions to calculate the carry and auxiliary carry flags
