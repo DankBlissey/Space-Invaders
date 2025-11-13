@@ -45,11 +45,11 @@ void CPU::lxiSP() {
 }
 
 void CPU::staxB() {
-	// Do nothing
+	writeMem(readPairB(), A);
 }
 
 void CPU::staxD() {
-	// Do nothing
+	writeMem(readPairD(), A);
 }
 
 void CPU::shld() {
@@ -183,11 +183,11 @@ void CPU::dadSP() {
 }
 
 void CPU::ldaxB() {
-	// Do nothing
+	A = readMem(readPairB());
 }
 
 void CPU::ldaxD() {
-	// Do nothing
+	A = readMem(readPairH());
 }
 
 void CPU::lhld() {
