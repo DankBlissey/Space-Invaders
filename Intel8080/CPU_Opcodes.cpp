@@ -19,7 +19,6 @@ static bool calculateAuxCarryINR(uint8_t value) {
 	return ((value & 0x0F) + 1) > 0x0F;
 }
 
-// Functions to calculate the carry and auxiliary carry flags
 static bool calculateAuxCarryDCR(uint8_t value) {
 	return (value & 0x0F) == 0;
 }
