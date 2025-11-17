@@ -39,6 +39,7 @@ class CPU {
 		void adc(uint8_t);
 		void sub(uint8_t);
 		void sbb(uint8_t);
+		void ana(uint8_t);
 
 		// Specific Opcode functions
 		void nop();

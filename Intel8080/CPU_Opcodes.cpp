@@ -103,6 +103,13 @@ void CPU::sbb(uint8_t reg) {
 	Sign = checkSign(A);
 }
 
+void CPU::ana(uint8_t reg) {
+	A = A & reg;
+	Carry = false;
+	Parity = checkParity(A);
+	Zero = (A == 0);
+	Sign = checkSign(A);
+}
 
 // Specific opcode functions only below here
 
@@ -746,35 +753,35 @@ void CPU::sbbA() {
 }
 
 void CPU::anaB() {
-	// Do nothing
+	ana(B);
 }
 
 void CPU::anaC() {
-	// Do nothing
+	ana(C);
 }
 
 void CPU::anaD() {
-	// Do nothing
+	ana(D);
 }
 
 void CPU::anaE() {
-	// Do nothing
+	ana(E);
 }
 
 void CPU::anaH() {
-	// Do nothing
+	ana(H);
 }
 
 void CPU::anaL() {
-	// Do nothing
+	ana(L);
 }
 
 void CPU::anaM() {
-	// Do nothing
+	ana(readMem(readPairH()));
 }
 
 void CPU::anaA() {
-	// Do nothing
+	ana(A);
 }
 
 void CPU::xraB() {
