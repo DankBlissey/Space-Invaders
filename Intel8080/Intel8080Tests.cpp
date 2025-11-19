@@ -575,3 +575,19 @@ TEST_CASE("PUSH Push data onto stack", "[opcodes, regPairInstructions]") {
         }
     }
 }
+
+TEST_CASE("POP Pop data off stack", "[opcodes, regPairInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        SECTION("Example 1") {
+            testCpu.writeMem(0x1239, 0x3D);
+            testCpu.writeMem(0x123A, 0x93);
+            testCpu.setSp(0x1239);
+            testCpu.writeMem(0x000, 0xE1); // POP H
+            testCpu.cycle();
+            REQUIRE(testCpu.getSp() == 0x123B);
+            REQUIRE(testCpu.getL() == 0x3D);
+            REQUIRE(testCpu.getH() == 0x93);
+        }
+    }
+}

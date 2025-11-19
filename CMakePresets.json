@@ -1,5 +1,10 @@
 ﻿{
     "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20,
+        "patch": 0
+    },
     "configurePresets": [
         {
             "name": "windows-base",
@@ -8,8 +13,7 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -64,8 +68,6 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             },
             "condition": {
@@ -101,6 +103,26 @@
             "name": "linux-release",
             "configurePreset": "linux-release",
             "description": "Build Linux Release preset"
+        },
+        {
+            "name": "x64-debug",
+            "configurePreset": "x64-debug",
+            "description": "Build Windows x64 Debug preset"
+        },
+        {
+            "name": "x64-release",
+            "configurePreset": "x64-release",
+            "description": "Build Windows x64 Release preset"
+        },
+        {
+            "name": "x86-debug",
+            "configurePreset": "x86-debug",
+            "description": "Build Windows x86 Debug preset"
+        },
+        {
+            "name": "x86-release",
+            "configurePreset": "x86-release",
+            "description": "Build Windows x86 Release preset"
         }
     ]
 }
