@@ -2,7 +2,7 @@
 #include "Opcode_Cycles.cpp"
 
 // Array of function pointers for each opcode
-static void (CPU::* functptr[256])() {
+const CPU::OpFunc CPU::functptr[256] = {
 	&CPU::nop, & CPU::lxiB, & CPU::staxB, & CPU::inxB, & CPU::inrB, & CPU::dcrB, & CPU::mviB, & CPU::rlc, & CPU::nop, & CPU::dadB, & CPU::ldaxB, & CPU::dcxB, & CPU::inrC, & CPU::dcrC, & CPU::mviC, & CPU::rrc,
 		& CPU::nop, & CPU::lxiD, & CPU::staxD, & CPU::inxD, & CPU::inrD, & CPU::dcrD, & CPU::mviD, & CPU::ral, & CPU::nop, & CPU::dadD, & CPU::ldaxD, & CPU::dcxD, & CPU::inrE, & CPU::dcrE, & CPU::mviE, & CPU::rar,
 		& CPU::nop, & CPU::lxiH, & CPU::shld, & CPU::inxH, & CPU::inrH, & CPU::dcrH, & CPU::mviH, & CPU::daa, & CPU::nop, & CPU::dadH, & CPU::lhld, & CPU::dcxH, & CPU::inrL, & CPU::dcrL, & CPU::mviL, & CPU::cma,

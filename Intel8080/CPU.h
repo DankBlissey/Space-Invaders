@@ -31,6 +31,27 @@ class CPU {
 		void stackPush(uint16_t);
 		uint16_t stackPop();
 
+		void cycle();					// CPU emulation cycle
+
+		void loadProgram(); // Load a program into memory
+
+		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
+
+	protected:
+		auto tiedRegisters() const;
+		uint16_t pc;					// Program counter
+		uint16_t sp;					// Stack pointer
+		unsigned long cycles;			// Number of completed cycles
+		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap)
+		uint8_t B, C, D, E, H, L, A;	// General purpose registers
+		bool Sign, Zero, AuxCarry, 
+			Parity, Carry;				// Flags
+		std::array<uint8_t, 256> in;	// input
+		std::array<uint8_t, 256> out;	// Output
+
+		using OpFunc = void (CPU::*)();
+		static const OpFunc functptr[256];
+
 		// General opcode functions
 		void dcr(uint8_t&);
 		void inr(uint8_t&);
@@ -344,22 +365,4 @@ class CPU {
 		void xri();
 		void cpi();
 		// End of opcode functions
-
-		void cycle();					// CPU emulation cycle
-
-		void loadProgram(); // Load a program into memory
-
-		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
-
-	protected:
-		auto tiedRegisters() const;
-		uint16_t pc;					// Program counter
-		uint16_t sp;					// Stack pointer
-		unsigned long cycles;			// Number of completed cycles
-		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap)
-		uint8_t B, C, D, E, H, L, A;	// General purpose registers
-		bool Sign, Zero, AuxCarry, 
-			Parity, Carry;				// Flags
-		std::array<uint8_t, 256> in;	// input
-		std::array<uint8_t, 256> out;	// Output
 };
