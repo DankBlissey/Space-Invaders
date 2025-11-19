@@ -6,8 +6,8 @@ TestCPU testCpu = TestCPU();
 
 TEST_CASE("CMC Complement Carry", "[opcodes, carry]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x3F);
-    testCpu.writeMem(0x001, 0x3F);
+    testCpu.setMem(0x000, 0x3F);
+    testCpu.setMem(0x001, 0x3F);
     // Carry begins at 0
     REQUIRE(Intel_8080_State().with_Carry(0).with_pc(0).stateEquals(testCpu));
     testCpu.cycle();
@@ -20,8 +20,8 @@ TEST_CASE("CMC Complement Carry", "[opcodes, carry]") {
 
 TEST_CASE("STC Set Carry", "[opcodes, carry]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x37);
-    testCpu.writeMem(0x001, 0x37);
+    testCpu.setMem(0x000, 0x37);
+    testCpu.setMem(0x001, 0x37);
     // Carry begins at 0
     REQUIRE(Intel_8080_State().with_Carry(0).with_pc(0).stateEquals(testCpu));
     testCpu.cycle();
@@ -37,13 +37,13 @@ TEST_CASE("STC Set Carry", "[opcodes, carry]") {
 TEST_CASE("INR Increment Register or Memory (values)", "[opcodes, singleRegInstruction, values]") {
     testCpu.init();
     SECTION("INR on basic registers") {
-        testCpu.writeMem(0x000, 0x04); // INRB
-        testCpu.writeMem(0x001, 0x0C); // INRC
-        testCpu.writeMem(0x002, 0x14); // INRD
-        testCpu.writeMem(0x003, 0x1C); // INRE
-        testCpu.writeMem(0x004, 0x24); // INRH
-        testCpu.writeMem(0x005, 0x2C); // INRL
-        testCpu.writeMem(0x006, 0x3C); // INRA
+        testCpu.setMem(0x000, 0x04); // INRB
+        testCpu.setMem(0x001, 0x0C); // INRC
+        testCpu.setMem(0x002, 0x14); // INRD
+        testCpu.setMem(0x003, 0x1C); // INRE
+        testCpu.setMem(0x004, 0x24); // INRH
+        testCpu.setMem(0x005, 0x2C); // INRL
+        testCpu.setMem(0x006, 0x3C); // INRA
         SECTION("INR correctly increments a register value") {
             testCpu.setAllReg(34);
             for (int i = 0; i < 7; i++) {
@@ -73,34 +73,34 @@ TEST_CASE("INR Increment Register or Memory (values)", "[opcodes, singleRegInstr
         }
     }
     SECTION("INR on memory location") {
-        testCpu.writeMem(0x00,0x34); // INRM
+        testCpu.setMem(0x00,0x34); // INRM
         testCpu.setH(0x3A);
         testCpu.setL(0x7C);
         SECTION("INR correctly increments a memory value") {
-            testCpu.writeMem(0x3A7C, 34);
+            testCpu.setMem(0x3A7C, 34);
             testCpu.cycle();
-            REQUIRE(testCpu.readMem(0x3A7C) == 35);
+            REQUIRE(testCpu.getMem(0x3A7C) == 35);
         }
         SECTION("INR correctly increments a negative memory value") {
             int8_t negative = -12;
-            testCpu.writeMem(0x3A7C, std::bit_cast<uint8_t>(negative)); 
+            testCpu.setMem(0x3A7C, std::bit_cast<uint8_t>(negative)); 
             testCpu.cycle();
             int8_t inrNegative = -11;
-            REQUIRE(testCpu.readMem(0x3A7C) == std::bit_cast<uint8_t>(inrNegative));
+            REQUIRE(testCpu.getMem(0x3A7C) == std::bit_cast<uint8_t>(inrNegative));
         }
         SECTION("INR correctly overflows") {
             int8_t maxNegative = -1;
             uint8_t notSigned = std::bit_cast<uint8_t>(maxNegative);
-            testCpu.writeMem(0x3A7C, notSigned);
+            testCpu.setMem(0x3A7C, notSigned);
             testCpu.cycle();
-            REQUIRE(testCpu.readMem(0x3A7C) == 0);
+            REQUIRE(testCpu.getMem(0x3A7C) == 0);
         }
     }
 }
 
 TEST_CASE("INR Increment Register or Memory (flags)", "[opcodes, singleRegInstruction, flags]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x04); // INRB
+    testCpu.setMem(0x000, 0x04); // INRB
     SECTION("Case 1: -1 -> 0") {
         testCpu.setB(255);
         testCpu.cycle();
@@ -145,13 +145,13 @@ TEST_CASE("INR Increment Register or Memory (flags)", "[opcodes, singleRegInstru
 TEST_CASE("DCR Decrement Register or Memory (values)", "[opcodes, singleRegInstructions, values]") {
     testCpu.init();
     SECTION("DCR on basic registers") {
-        testCpu.writeMem(0x000, 0x05); // DCRB
-        testCpu.writeMem(0x001, 0x0D); // DCRC
-        testCpu.writeMem(0x002, 0x15); // DCRD
-        testCpu.writeMem(0x003, 0x1D); // DCRE
-        testCpu.writeMem(0x004, 0x25); // DCRH
-        testCpu.writeMem(0x005, 0x2D); // DCRL
-        testCpu.writeMem(0x006, 0x3D); // DCRA
+        testCpu.setMem(0x000, 0x05); // DCRB
+        testCpu.setMem(0x001, 0x0D); // DCRC
+        testCpu.setMem(0x002, 0x15); // DCRD
+        testCpu.setMem(0x003, 0x1D); // DCRE
+        testCpu.setMem(0x004, 0x25); // DCRH
+        testCpu.setMem(0x005, 0x2D); // DCRL
+        testCpu.setMem(0x006, 0x3D); // DCRA
         SECTION("DCR correctly decrements on all registers") {
             testCpu.setAllReg(34);
             for (int i = 0; i < 7; i++) {
@@ -161,20 +161,20 @@ TEST_CASE("DCR Decrement Register or Memory (values)", "[opcodes, singleRegInstr
         }
     }
     SECTION("DCR on memory") {
-        testCpu.writeMem(0x00,0x35); // DCRM
+        testCpu.setMem(0x00,0x35); // DCRM
         testCpu.setH(0x3A);
         testCpu.setL(0x7C);
         SECTION("DCR correctly decrements a memory value") {
-            testCpu.writeMem(0x3A7C, 34);
+            testCpu.setMem(0x3A7C, 34);
             testCpu.cycle();
-            REQUIRE(testCpu.readMem(0x3A7C) == 33);
+            REQUIRE(testCpu.getMem(0x3A7C) == 33);
         }
     }
 }
 
 TEST_CASE("DCR Decrement Register or Memory (flags)", "[opcodes, singleRegInstructions, flags]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x05); // DCRB
+    testCpu.setMem(0x000, 0x05); // DCRB
     SECTION("Case 1: 80 -> 79") {
         testCpu.setB(80);
         testCpu.cycle();
@@ -207,7 +207,7 @@ TEST_CASE("DCR Decrement Register or Memory (flags)", "[opcodes, singleRegInstru
 
 TEST_CASE("CMA Complement Accumulator", "[opcodes, singleRegInstructions]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x2F); // CMA
+    testCpu.setMem(0x000, 0x2F); // CMA
     SECTION("Case 1:") {
         testCpu.setA(0b01001101);
         testCpu.cycle();
@@ -227,7 +227,7 @@ TEST_CASE("CMA Complement Accumulator", "[opcodes, singleRegInstructions]") {
 
 TEST_CASE("DAA Decimal Adjust Accumulator", "[opcodes, singleRegInstructions]") {
     testCpu.init();
-    testCpu.writeMem(0x000, 0x27);
+    testCpu.setMem(0x000, 0x27);
     SECTION("Case: 1, Provided in 8080 manual") {
         testCpu.setA(0x9B);
         testCpu.cycle();
@@ -276,12 +276,12 @@ TEST_CASE("MOV Move data from one register or memory location to another", "[opc
     SECTION("Copy value across all registers") {
         uint8_t testValue = 0x3D;
         testCpu.setB(testValue);
-        testCpu.writeMem(0x000, 0x48); // MOV CB
-        testCpu.writeMem(0x001, 0x51); // MOV DC
-        testCpu.writeMem(0x002, 0x5A); // MOV ED
-        testCpu.writeMem(0x003, 0x63); // MOV HE
-        testCpu.writeMem(0x004, 0x6C); // MOV LH
-        testCpu.writeMem(0x005, 0x7D); // MOV AL
+        testCpu.setMem(0x000, 0x48); // MOV CB
+        testCpu.setMem(0x001, 0x51); // MOV DC
+        testCpu.setMem(0x002, 0x5A); // MOV ED
+        testCpu.setMem(0x003, 0x63); // MOV HE
+        testCpu.setMem(0x004, 0x6C); // MOV LH
+        testCpu.setMem(0x005, 0x7D); // MOV AL
         for (int i = 0; i < 6; i++) {
             testCpu.cycle();
         }
@@ -291,16 +291,16 @@ TEST_CASE("MOV Move data from one register or memory location to another", "[opc
         testCpu.setB(0x3D);
         testCpu.setH(0x4F);
         testCpu.setL(0x01);
-        testCpu.writeMem(0x000, 0x70); // MOV MB
+        testCpu.setMem(0x000, 0x70); // MOV MB
         testCpu.cycle();
-        REQUIRE(testCpu.readMem(0x4F01) == 0x3D);
+        REQUIRE(testCpu.getMem(0x4F01) == 0x3D);
     }
     SECTION("Copy from mem to register") {
         testCpu.setE(0x3D);
         testCpu.setH(0x5A);
         testCpu.setL(0xFF);
-        testCpu.writeMem(0x5AFF, 0x20);
-        testCpu.writeMem(0x000, 0x5E); // MOV EM
+        testCpu.setMem(0x5AFF, 0x20);
+        testCpu.setMem(0x000, 0x5E); // MOV EM
         testCpu.cycle();
         REQUIRE(testCpu.getE() == 0x20);
     }
@@ -312,11 +312,11 @@ TEST_CASE("STAX Store accumulator to memory", "[opcodes, singleRegInstructions]"
         testCpu.setB(0x3F);
         testCpu.setC(0x16);
         testCpu.setA(0xFF);
-        testCpu.writeMem(0x3F16, 0x20);
-        testCpu.writeMem(0x000, 0x02); // STAX B
+        testCpu.setMem(0x3F16, 0x20);
+        testCpu.setMem(0x000, 0x02); // STAX B
         testCpu.cycle();
-        REQUIRE(testCpu.readPairB() == 0x3F16);
-        REQUIRE(testCpu.readMem(testCpu.readPairB()) == 0xFF);
+        REQUIRE(testCpu.getPairB() == 0x3F16);
+        REQUIRE(testCpu.getMem(testCpu.getPairB()) == 0xFF);
     }
 }
 
@@ -326,10 +326,10 @@ TEST_CASE("LDAX Load accumulator with data from memory", "[opcodes, singleRegIns
         testCpu.setD(0x93);
         testCpu.setE(0x8B);
         testCpu.setA(0xFF);
-        testCpu.writeMem(0x938B, 0x20);
-        testCpu.writeMem(0x000, 0x1A); // LDAX D
+        testCpu.setMem(0x938B, 0x20);
+        testCpu.setMem(0x000, 0x1A); // LDAX D
         testCpu.cycle();
-        REQUIRE(testCpu.readPairD() == 0x938B);
+        REQUIRE(testCpu.getPairD() == 0x938B);
         REQUIRE(testCpu.getA() == 0x20);
     }
 }
@@ -339,7 +339,7 @@ TEST_CASE("ADD Add register or memory to accumulator", "[opcodes, regOrMemToAccu
     SECTION("Manual example 1") {
         testCpu.setD(0x2E);
         testCpu.setA(0x6C);
-        testCpu.writeMem(0x000, 0x82); // ADD D
+        testCpu.setMem(0x000, 0x82); // ADD D
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0x9A);
         REQUIRE(testCpu.getSign() == true);
@@ -351,7 +351,7 @@ TEST_CASE("ADD Add register or memory to accumulator", "[opcodes, regOrMemToAccu
     SECTION("Manual example 2") {
         uint8_t value {9};
         testCpu.setA(value);
-        testCpu.writeMem(0x000, 0x87); // ADD A
+        testCpu.setMem(0x000, 0x87); // ADD A
         testCpu.cycle();
         REQUIRE(testCpu.getA() == value * 2);
     }
@@ -362,7 +362,7 @@ TEST_CASE("ADC Add register or memory to accumulator with carry", "[opcodes, reg
     SECTION("Manual example") {
         testCpu.setC(0x3D);
         testCpu.setA(0x42);
-        testCpu.writeMem(0x000, 0x89); // ADC C
+        testCpu.setMem(0x000, 0x89); // ADC C
         SECTION("Without carry") {
             testCpu.setCarry(false);
             testCpu.cycle();
@@ -390,7 +390,7 @@ TEST_CASE("SUB Subtract register or memory from accumulator", "[opcodes, regOrMe
     testCpu.init();
     SECTION("Manual example") {
         testCpu.setA(0x3E);
-        testCpu.writeMem(0x000, 0x97); // SUB A
+        testCpu.setMem(0x000, 0x97); // SUB A
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0);
         REQUIRE(testCpu.getCarry() == false);
@@ -407,7 +407,7 @@ TEST_CASE("SBB Subtract register or memory from accumulator with borrow", "[opco
         testCpu.setL(0x02);
         testCpu.setA(0x04);
         testCpu.setCarry(true);
-        testCpu.writeMem(0x000, 0x9D); // SBB L
+        testCpu.setMem(0x000, 0x9D); // SBB L
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 1);
         REQUIRE(testCpu.getCarry() == false);
@@ -423,7 +423,7 @@ TEST_CASE("ANA Logical and register or memory with accumulator", "[opcodes, regO
     SECTION("Manual example") {
         testCpu.setA(0xFC);
         testCpu.setC(0x0F);
-        testCpu.writeMem(0x000, 0xA1); // ANA C
+        testCpu.setMem(0x000, 0xA1); // ANA C
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0x0C);
     }
@@ -435,9 +435,9 @@ TEST_CASE("XRA Logical exclusive-or register or memory with accumulator", "[opco
         testCpu.setA(0x04);
         testCpu.setB(0xFF);
         testCpu.setC(0xA5);
-        testCpu.writeMem(0x000, 0xAF); // XRA A
-        testCpu.writeMem(0x001, 0x47); // MOV B A
-        testCpu.writeMem(0x002, 0x4F); // MOV C A
+        testCpu.setMem(0x000, 0xAF); // XRA A
+        testCpu.setMem(0x001, 0x47); // MOV B A
+        testCpu.setMem(0x002, 0x4F); // MOV C A
         for (int i = 0; i < 3; i++) {
             testCpu.cycle();
         }
@@ -448,7 +448,7 @@ TEST_CASE("XRA Logical exclusive-or register or memory with accumulator", "[opco
         uint8_t flippedValue = ~value;
         testCpu.setA(0xFF);
         testCpu.setB(value);
-        testCpu.writeMem(0x000, 0xA8); // XRA B
+        testCpu.setMem(0x000, 0xA8); // XRA B
         REQUIRE(testCpu.getA() == 255);
         testCpu.cycle();
         REQUIRE(testCpu.getA() == flippedValue);
@@ -460,7 +460,7 @@ TEST_CASE("ORA Logical or register or memory with accumulator", "[opcodes, regOr
     SECTION("Manual example") {
         testCpu.setC(0x0F);
         testCpu.setA(0x33);
-        testCpu.writeMem(0x000, 0xB1); // ORA C
+        testCpu.setMem(0x000, 0xB1); // ORA C
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0x3F);
     }
@@ -470,7 +470,7 @@ TEST_CASE("CMP Compare register or memory with accumulator", "[opcodes, regOrMem
     testCpu.init();
     SECTION("Manual example") {
         testCpu.setE(0x05);
-        testCpu.writeMem(0x000, 0xBB); // CMP E
+        testCpu.setMem(0x000, 0xBB); // CMP E
         SECTION("Example 1") {
             testCpu.setA(0x0A);
             testCpu.cycle();
@@ -504,7 +504,7 @@ TEST_CASE("RLC Rotate accumulator left", "[opcodes, regOrMemToAccumulatorInstruc
     testCpu.init();
     SECTION("Manual example") {
         testCpu.setA(0xF2);
-        testCpu.writeMem(0x000, 0x07); // RLC
+        testCpu.setMem(0x000, 0x07); // RLC
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0xE5);
         REQUIRE(testCpu.getCarry() == true);
@@ -515,7 +515,7 @@ TEST_CASE("RRC Rotate accumulator right", "[opcodes, regOrMemToAccumulatorInstru
     testCpu.init();
     SECTION("Manual example") {
         testCpu.setA(0xF2);
-        testCpu.writeMem(0x000, 0x0F); // RRC
+        testCpu.setMem(0x000, 0x0F); // RRC
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0x79);
         REQUIRE(testCpu.getCarry() == false);
@@ -527,7 +527,7 @@ TEST_CASE("RAL Rotate accumulator left through carry", "[opcodes, regOrMemToAccu
     SECTION("Manual example") {
         testCpu.setA(0xB5);
         testCpu.setCarry(false);
-        testCpu.writeMem(0x000, 0x17); // RAL
+        testCpu.setMem(0x000, 0x17); // RAL
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0x6A);
         REQUIRE(testCpu.getCarry() == true);
@@ -539,7 +539,7 @@ TEST_CASE("RAR Rotate accumulator right through carry", "[opcodes, regOrMemToAcc
     SECTION("Manual example") {
         testCpu.setA(0x6A);
         testCpu.setCarry(true);
-        testCpu.writeMem(0x000, 0x1F);
+        testCpu.setMem(0x000, 0x1F);
         testCpu.cycle();
         REQUIRE(testCpu.getA() == 0xB5);
         REQUIRE(testCpu.getCarry() == false);
@@ -553,11 +553,11 @@ TEST_CASE("PUSH Push data onto stack", "[opcodes, regPairInstructions]") {
             testCpu.setD(0x8F);
             testCpu.setE(0x9D);
             testCpu.setSp(0x3A2C);
-            testCpu.writeMem(0x000, 0xD5); // PUSH D
+            testCpu.setMem(0x000, 0xD5); // PUSH D
             testCpu.cycle();
             REQUIRE(testCpu.getSp() == 0x3A2A);
-            REQUIRE(testCpu.readMem(0x3A2B) == 0x8F);
-            REQUIRE(testCpu.readMem(0x3A2A) == 0x9D);
+            REQUIRE(testCpu.getMem(0x3A2B) == 0x8F);
+            REQUIRE(testCpu.getMem(0x3A2A) == 0x9D);
         }
         SECTION("Example 2") {
             testCpu.setA(0x1F);
@@ -567,11 +567,11 @@ TEST_CASE("PUSH Push data onto stack", "[opcodes, regPairInstructions]") {
             testCpu.setParity(true);
             testCpu.setSign(false);
             testCpu.setAuxCarry(false);
-            testCpu.writeMem(0x000, 0xF5); // PUSH PSW
+            testCpu.setMem(0x000, 0xF5); // PUSH PSW
             testCpu.cycle();
             REQUIRE(testCpu.getSp() == 0x5028);
-            REQUIRE(testCpu.readMem(0x5029) == 0x1F);
-            REQUIRE(testCpu.readMem(0x5028) == 0x47);
+            REQUIRE(testCpu.getMem(0x5029) == 0x1F);
+            REQUIRE(testCpu.getMem(0x5028) == 0x47);
         }
     }
 }
@@ -580,20 +580,20 @@ TEST_CASE("POP Pop data off stack", "[opcodes, regPairInstructions]") {
     testCpu.init();
     SECTION("Manual example") {
         SECTION("Example 1") {
-            testCpu.writeMem(0x1239, 0x3D);
-            testCpu.writeMem(0x123A, 0x93);
+            testCpu.setMem(0x1239, 0x3D);
+            testCpu.setMem(0x123A, 0x93);
             testCpu.setSp(0x1239);
-            testCpu.writeMem(0x000, 0xE1); // POP H
+            testCpu.setMem(0x000, 0xE1); // POP H
             testCpu.cycle();
             REQUIRE(testCpu.getSp() == 0x123B);
             REQUIRE(testCpu.getL() == 0x3D);
             REQUIRE(testCpu.getH() == 0x93);
         }
         SECTION("Example 2") {
-            testCpu.writeMem(0x2C00, 0xC3);
-            testCpu.writeMem(0x2C01, 0xFF);
+            testCpu.setMem(0x2C00, 0xC3);
+            testCpu.setMem(0x2C01, 0xFF);
             testCpu.setSp(0x2C00);
-            testCpu.writeMem(0x000, 0xF1); // POP PSW
+            testCpu.setMem(0x000, 0xF1); // POP PSW
             testCpu.cycle();
             REQUIRE(testCpu.getA() == 0xFF);
             REQUIRE(testCpu.getSign() == true);
@@ -613,18 +613,18 @@ TEST_CASE("DAD Double add", "[opcodes, regPairInstructions]") {
         SECTION("Example 1") {
             testCpu.setB(0x33);
             testCpu.setC(0x9F);
-            testCpu.writeMem(0x000, 0x09); // DAD B
+            testCpu.setMem(0x000, 0x09); // DAD B
             testCpu.cycle();
             REQUIRE(testCpu.getH() == 0xD5);
             REQUIRE(testCpu.getL() == 0x1A);
             REQUIRE(testCpu.getCarry() == false);
         }
         SECTION("Example 2") {
-            uint16_t value = testCpu.readPairH();
+            uint16_t value = testCpu.getPairH();
             value = value << 1;
-            testCpu.writeMem(0x000, 0x29); // DAD H
+            testCpu.setMem(0x000, 0x29); // DAD H
             testCpu.cycle();
-            REQUIRE(testCpu.readPairH() == value);
+            REQUIRE(testCpu.getPairH() == value);
         }
     }
 }

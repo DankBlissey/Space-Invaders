@@ -8,6 +8,13 @@ class TestCPU: public CPU {
         uint16_t getSp();
         unsigned long getCycles();
 
+        uint8_t getMem(uint16_t);
+
+        uint16_t getPairB();
+        uint16_t getPairD();
+        uint16_t getPairH();
+        uint16_t getPairPSW();
+
         uint8_t getB();
         uint8_t getC();
         uint8_t getD();
@@ -25,6 +32,13 @@ class TestCPU: public CPU {
         void setPc(uint16_t);
         void setSp(uint16_t);
         void setCycles(unsigned long);
+
+        void setMem(uint16_t, uint8_t);
+
+        void setPairB(uint16_t);
+        void setPairD(uint16_t);
+        void setPairH(uint16_t);
+        void setPairPSW(uint16_t);
 
         void setAllReg(uint8_t);
 

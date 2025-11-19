@@ -15,6 +15,14 @@ class CPU {
 		CPU();
 		CPU(const CPU&);
 		void init();
+
+		void cycle();					// CPU emulation cycle
+
+		void loadProgram(); // Load a program into memory
+
+		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
+
+	protected:
 		void clearMem();
 		uint8_t readMem(uint16_t);
 		void writeMem(uint16_t, uint8_t);
@@ -32,15 +40,9 @@ class CPU {
 
 		void stackPush(uint16_t);
 		uint16_t stackPop();
-
-		void cycle();					// CPU emulation cycle
-
-		void loadProgram(); // Load a program into memory
-
-		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
-
-	protected:
+		
 		auto tiedRegisters() const;
+
 		uint16_t pc;					// Program counter
 		uint16_t sp;					// Stack pointer
 		unsigned long cycles;			// Number of completed cycles

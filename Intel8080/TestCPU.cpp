@@ -13,6 +13,26 @@ unsigned long TestCPU::getCycles() {
     return cycles;
 }
 
+uint8_t TestCPU::getMem(uint16_t addr) {
+    return readMem(addr);
+}
+
+uint16_t TestCPU::getPairB() {
+    return readPairB();
+}
+
+uint16_t TestCPU::getPairD() {
+    return readPairD();
+}
+
+uint16_t TestCPU::getPairH() {
+    return readPairH();
+}
+
+uint16_t TestCPU::getPairPSW() {
+    return readPairPSW();
+}
+
 uint8_t TestCPU::getB() {
     return B;
 }
@@ -72,6 +92,26 @@ void TestCPU::setSp(uint16_t in) {
 
 void TestCPU::setCycles(unsigned long in) {
     cycles = in;
+}
+
+void TestCPU::setMem(uint16_t addr, uint8_t data) {
+    writeMem(addr, data);
+}
+
+void TestCPU::setPairB(uint16_t data) {
+    writePairB(data);
+}
+
+void TestCPU::setPairD(uint16_t data) {
+    writePairD(data);
+}
+
+void TestCPU::setPairH(uint16_t data) {
+    writePairH(data);
+}
+
+void TestCPU::setPairPSW(uint16_t data) {
+    writePairPSW(data);
 }
 
 void TestCPU::setB(uint8_t in) {
