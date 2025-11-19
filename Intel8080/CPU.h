@@ -42,12 +42,12 @@ class CPU {
 		uint16_t pc;					// Program counter
 		uint16_t sp;					// Stack pointer
 		unsigned long cycles;			// Number of completed cycles
-		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap)
+		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap with unique pointer)
 		uint8_t B, C, D, E, H, L, A;	// General purpose registers
 		bool Sign, Zero, AuxCarry, 
 			Parity, Carry;				// Flags
-		std::array<uint8_t, 256> in;	// input
-		std::array<uint8_t, 256> out;	// Output
+		std::array<uint8_t, 256> in;	// input bus
+		std::array<uint8_t, 256> out;	// Output bus
 
 		using OpFunc = void (CPU::*)();
 		static const OpFunc functptr[256];
