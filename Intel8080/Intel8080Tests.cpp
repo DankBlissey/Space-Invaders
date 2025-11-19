@@ -545,3 +545,33 @@ TEST_CASE("RAR Rotate accumulator right through carry", "[opcodes, regOrMemToAcc
         REQUIRE(testCpu.getCarry() == false);
     }
 }
+
+TEST_CASE("PUSH Push data onto stack", "[opcodes, regPairInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        SECTION("Example 1") {
+            testCpu.setD(0x8F);
+            testCpu.setE(0x9D);
+            testCpu.setSp(0x3A2C);
+            testCpu.writeMem(0x000, 0xD5); // PUSH D
+            testCpu.cycle();
+            REQUIRE(testCpu.getSp() == 0x3A2A);
+            REQUIRE(testCpu.readMem(0x3A2B) == 0x8F);
+            REQUIRE(testCpu.readMem(0x3A2A) == 0x9D);
+        }
+        SECTION("Example 2") {
+            testCpu.setA(0x1F);
+            testCpu.setSp(0x502A);
+            testCpu.setCarry(true);
+            testCpu.setZero(true);
+            testCpu.setParity(true);
+            testCpu.setSign(false);
+            testCpu.setAuxCarry(false);
+            testCpu.writeMem(0x000, 0xF5); // PUSH PSW
+            testCpu.cycle();
+            REQUIRE(testCpu.getSp() == 0x5028);
+            REQUIRE(testCpu.readMem(0x5029) == 0x1F);
+            REQUIRE(testCpu.readMem(0x5028) == 0x47);
+        }
+    }
+}
