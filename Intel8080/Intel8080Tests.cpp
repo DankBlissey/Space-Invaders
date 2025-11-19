@@ -417,3 +417,51 @@ TEST_CASE("SBB Subtract register or memory from accumulator with borrow", "[opco
         REQUIRE(testCpu.getAuxCarry() == true);
     }
 }
+
+TEST_CASE("ANA Logical and register or memory with accumulator", "[opcodes, regOrMemToAccumulatorInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setA(0xFC);
+        testCpu.setC(0x0F);
+        testCpu.writeMem(0x000, 0xA1); // ANA C
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x0C);
+    }
+}
+
+TEST_CASE("XRA Logical exclusive-or register or memory with accumulator", "[opcodes, regOrMemToAccumulatorInstructions]") {
+    testCpu.init();
+    SECTION("Manual example 1") {
+        testCpu.setA(0x04);
+        testCpu.setB(0xFF);
+        testCpu.setC(0xA5);
+        testCpu.writeMem(0x000, 0xAF); // XRA A
+        testCpu.writeMem(0x001, 0x47); // MOV B A
+        testCpu.writeMem(0x002, 0x4F); // MOV C A
+        for (int i = 0; i < 3; i++) {
+            testCpu.cycle();
+        }
+        REQUIRE(Intel_8080_State().with_A(0).with_B(0).with_C(0).stateEquals(testCpu));
+    }
+    SECTION("Manual example 2") {
+        uint8_t value {0xA4};
+        uint8_t flippedValue = ~value;
+        testCpu.setA(0xFF);
+        testCpu.setB(value);
+        testCpu.writeMem(0x000, 0xA8); // XRA B
+        REQUIRE(testCpu.getA() == 255);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == flippedValue);
+    }
+}
+
+TEST_CASE("ORA Logical or register or memory with accumulator") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setC(0x0F);
+        testCpu.setA(0x33);
+        testCpu.writeMem(0x000, 0xB1); // ORA C
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x3F);
+    }
+}
