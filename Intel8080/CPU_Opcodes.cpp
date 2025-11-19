@@ -40,6 +40,10 @@ static uint8_t twosComplement(uint8_t value) {
 	return ~value + 1;
 }
 
+static bool calculateCarryDAD(uint16_t a, uint16_t b) {
+	return (unsigned long)a + (unsigned long)b > 0xFFFF;
+}
+
 
 
 // General purpose opcode functions are here
@@ -140,6 +144,12 @@ void CPU::cmp(uint8_t reg) {
 	Sign = checkSign(subValue);
 	Parity = checkParity(subValue);
 	Zero = checkZero(subValue);
+}
+
+void CPU::dad(uint16_t reg) {
+	uint16_t pair {readPairH()};
+	Carry = calculateCarryDAD(pair, reg);
+	writePairH(pair + reg);
 }
 
 // Specific opcode functions only below here
@@ -298,19 +308,19 @@ void CPU::stc() {
 }
 
 void CPU::dadB() {
-	// Do nothing
+	dad(readPairB());
 }
 
 void CPU::dadD() {
-	// Do nothing
+	dad(readPairD());
 }
 
 void CPU::dadH() {
-	// Do nothing
+	dad(readPairH());
 }
 
 void CPU::dadSP() {
-	// Do nothing
+	dad(sp);
 }
 
 void CPU::ldaxB() {

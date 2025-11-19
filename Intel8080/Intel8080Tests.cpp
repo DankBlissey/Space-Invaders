@@ -604,3 +604,27 @@ TEST_CASE("POP Pop data off stack", "[opcodes, regPairInstructions]") {
         }
     }
 }
+
+TEST_CASE("DAD Double add", "[opcodes, regPairInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setH(0xA1);
+        testCpu.setL(0x7B);
+        SECTION("Example 1") {
+            testCpu.setB(0x33);
+            testCpu.setC(0x9F);
+            testCpu.writeMem(0x000, 0x09); // DAD B
+            testCpu.cycle();
+            REQUIRE(testCpu.getH() == 0xD5);
+            REQUIRE(testCpu.getL() == 0x1A);
+            REQUIRE(testCpu.getCarry() == false);
+        }
+        SECTION("Example 2") {
+            uint16_t value = testCpu.readPairH();
+            value = value << 1;
+            testCpu.writeMem(0x000, 0x29); // DAD H
+            testCpu.cycle();
+            REQUIRE(testCpu.readPairH() == value);
+        }
+    }
+}
