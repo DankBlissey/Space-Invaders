@@ -1,4 +1,5 @@
 #include "CPU.h"
+#include <algorithm>
 
 // Helper functions
 
@@ -1134,7 +1135,8 @@ void CPU::inFunc() {
 }
 
 void CPU::xchg() {
-	// Do nothing
+	std::swap(D,H);
+	std::swap(E,L);
 }
 
 void CPU::ei() {

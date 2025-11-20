@@ -660,13 +660,27 @@ TEST_CASE("INX Increment register pair", "[opcodes, regPairInstructions]") {
 TEST_CASE("DCX Decrement register pair", "[opcodes, regPairInstructions]") {
     testCpu.init();
     SECTION("Manual example") {
-        SECTION("Example 1") {
-            testCpu.setH(0x98);
-            testCpu.setL(0x00);
-            testCpu.setMem(0x000, 0x2B); // DCX H
-            testCpu.cycle();
-            REQUIRE(testCpu.getH() == 0x97);
-            REQUIRE(testCpu.getL() == 0xFF);
-        }
+        testCpu.setH(0x98);
+        testCpu.setL(0x00);
+        testCpu.setMem(0x000, 0x2B); // DCX H
+        testCpu.cycle();
+        REQUIRE(testCpu.getH() == 0x97);
+        REQUIRE(testCpu.getL() == 0xFF);
+    }
+}
+
+TEST_CASE("XCHG Exchange registers", "[opcodes, regPairInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setD(0x33);
+        testCpu.setE(0x55);
+        testCpu.setH(0x00);
+        testCpu.setL(0xFF);
+        testCpu.setMem(0x000, 0xEB); // XCHG
+        REQUIRE(testCpu.getPairD() == 0x3355);
+        REQUIRE(testCpu.getPairH() == 0x00FF);
+        testCpu.cycle();
+        REQUIRE(testCpu.getPairD() == 0x00FF);
+        REQUIRE(testCpu.getPairH() == 0x3355);
     }
 }
