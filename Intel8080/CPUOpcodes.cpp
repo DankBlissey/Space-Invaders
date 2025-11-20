@@ -45,6 +45,10 @@ static bool calculateCarryDAD(uint16_t a, uint16_t b) {
 	return (unsigned long)a + (unsigned long)b > 0xFFFF;
 }
 
+static uint16_t combineBytes(uint8_t most, uint16_t least) {
+	return (most << 8) | least;
+}
+
 
 
 // General purpose opcode functions are here
@@ -158,7 +162,7 @@ void CPU::mvi(uint8_t& reg) {
 }
 
 uint16_t CPU::readImmediate() {
-	return (readMem(pc + 2) << 8) | readMem(pc + 1);
+	return combineBytes(readMem(pc + 2), readMem(pc + 1));
 }
 
 // Specific opcode functions only below here
