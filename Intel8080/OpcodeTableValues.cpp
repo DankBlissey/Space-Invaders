@@ -1,4 +1,3 @@
-#pragma once
 #include <cstdint>
 // Number of cycles for each opcode, important for timing
 static const std::uint8_t opcodeCycles[256]{
