@@ -186,6 +186,23 @@ void CPU::conditionalCallJump(bool flag) {
 	}
 }
 
+void CPU::returnFromCall() {
+	pc = stackPop();
+}
+
+void CPU::conditionalReturnFromCall(bool flag) {
+	if (flag) {
+		returnFromCall();
+	} else {
+		pc++;
+	}
+}
+
+void CPU::rst(uint16_t exp) {
+	stackPush(pc + 1);
+	pc = exp << 3;
+}
+
 // Specific opcode functions only below here
 
 void CPU::nop() {
@@ -983,19 +1000,19 @@ void CPU::cmpA() {
 }
 
 void CPU::rnz() {
-	// Do nothing
+	conditionalReturnFromCall(!Zero);
 }
 
 void CPU::rnc() {
-	// Do nothing
+	conditionalReturnFromCall(!Carry);
 }
 
 void CPU::rpo() {
-	// Do nothing
+	conditionalReturnFromCall(!Parity);
 }
 
 void CPU::rp() {
-	// Do nothing
+	conditionalReturnFromCall(!Sign);
 }
 
 void CPU::popB() {
@@ -1100,55 +1117,55 @@ void CPU::ori() {
 }
 
 void CPU::rst0() {
-	// Do nothing
+	rst(0);
 }
 
 void CPU::rst2() {
-	// Do nothing
+	rst(2);
 }
 
 void CPU::rst4() {
-	// Do nothing
+	rst(4);
 }
 
 void CPU::rst6() {
-	// Do nothing
+	rst(6);
 }
 
 void CPU::rst1() {
-	// Do nothing
+	rst(1);
 }
 
 void CPU::rst3() {
-	// Do nothing
+	rst(3);
 }
 
 void CPU::rst5() {
-	// Do nothing
+	rst(5);
 }
 
 void CPU::rst7() {
-	// Do nothing
+	rst(7);
 }
 
 void CPU::rz() {
-	// Do nothing
+	conditionalReturnFromCall(Zero);
 }
 
 void CPU::rc() {
-	// Do nothing
+	conditionalReturnFromCall(Carry);
 }
 
 void CPU::rpe() {
-	// Do nothing
+	conditionalReturnFromCall(Parity);
 }
 
 void CPU::rm() {
-	// Do nothing
+	conditionalReturnFromCall(Sign);
 }
 
 void CPU::ret() {
-	// Do nothing
+	returnFromCall();
 }
 
 void CPU::pchl() {
