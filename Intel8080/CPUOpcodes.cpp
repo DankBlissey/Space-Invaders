@@ -158,31 +158,27 @@ void CPU::dad(uint16_t reg) {
 }
 
 void CPU::mvi(uint8_t& reg) {
-	reg = readMem(pc+1);
+	reg = readMem(pc-1);
 }
 
 uint16_t CPU::readImmediate() {
-	return combineBytes(readMem(pc + 2), readMem(pc + 1));
+	return combineBytes(readMem(pc - 1), readMem(pc - 2));
 }
 
 void CPU::conditionalJump(bool flag) {
 	if (flag) {
 		pc = readImmediate();
-	} else {
-		pc += 3;
 	}
 }
 
 void CPU::callJump() {
-	stackPush(pc + 3);
+	stackPush(pc);
 	pc = readImmediate();
 }
 
 void CPU::conditionalCallJump(bool flag) {
 	if (flag) {
 		callJump();
-	} else {
-		pc += 3;
 	}
 }
 
@@ -193,13 +189,11 @@ void CPU::returnFromCall() {
 void CPU::conditionalReturnFromCall(bool flag) {
 	if (flag) {
 		returnFromCall();
-	} else {
-		pc++;
 	}
 }
 
 void CPU::rst(uint16_t exp) {
-	stackPush(pc + 1);
+	stackPush(pc);
 	pc = exp << 3;
 }
 
@@ -211,18 +205,18 @@ void CPU::nop() {
 }
 
 void CPU::lxiB() {
-	B = readMem(pc+2);
-	C = readMem(pc+1);
+	B = readMem(pc-1);
+	C = readMem(pc-2);
 }
 
 void CPU::lxiD() {
-	D = readMem(pc+2);
-	E = readMem(pc+1);
+	D = readMem(pc-1);
+	E = readMem(pc-2);
 }
 
 void CPU::lxiH() {
-	H = readMem(pc+2);
-	L = readMem(pc+1);
+	H = readMem(pc-1);
+	L = readMem(pc-2);
 }
 
 void CPU::lxiSP() {
@@ -322,7 +316,7 @@ void CPU::mviH() {
 }
 
 void CPU::mviM() {
-	writeMem(readPairH(), readMem(pc+1));
+	writeMem(readPairH(), readMem(pc-1));
 }
 
 void CPU::rlc() {
@@ -1052,7 +1046,7 @@ void CPU::jmp() {
 }
 
 void CPU::outFunc() {
-	writeOut(readMem(pc + 1), A);
+	writeOut(readMem(pc-1), A);
 }
 
 void CPU::xthl() {
@@ -1101,19 +1095,19 @@ void CPU::pushPSW() {
 }
 
 void CPU::adi() {
-	add(readMem(pc+1));
+	add(readMem(pc-1));
 }
 
 void CPU::sui() {
-	sub(readMem(pc+1));
+	sub(readMem(pc-1));
 }
 
 void CPU::ani() {
-	ana(readMem(pc+1));
+	ana(readMem(pc-1));
 }
 
 void CPU::ori() {
-	ora(readMem(pc+1));
+	ora(readMem(pc-1));
 }
 
 void CPU::rst0() {
@@ -1193,7 +1187,7 @@ void CPU::jm() {
 }
 
 void CPU::inFunc() {
-	A = readIn(readMem(pc + 1));
+	A = readIn(readMem(pc-1));
 }
 
 void CPU::xchg() {
@@ -1226,19 +1220,19 @@ void CPU::call() {
 }
 
 void CPU::aci() {
-	adc(readMem(pc+1));
+	adc(readMem(pc-1));
 }
 
 void CPU::sbi() {
-	sbb(readMem(pc+1));
+	sbb(readMem(pc-1));
 }
 
 void CPU::xri() {
-	xra(readMem(pc+1));
+	xra(readMem(pc-1));
 }
 
 void CPU::cpi() {
-	cmp(readMem(pc+1));
+	cmp(readMem(pc-1));
 }
 
 // End of opcode functions

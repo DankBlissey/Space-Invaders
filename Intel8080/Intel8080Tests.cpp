@@ -748,6 +748,6 @@ TEST_CASE("MVI Move immediate data", "[opcodes, immediateInstructions]") {
         for (int i = 0; i < 3; i++) {
             testCpu.cycle();
         }
-        REQUIRE(testCpu.getMem(0x3CF4) == 0x0FF);
+        REQUIRE(testCpu.getMem(0x3CF4) == 0xFF);
     }
 }

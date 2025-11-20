@@ -84,10 +84,10 @@ void CPU::loadProgram() {
 void CPU::cycle() {
 	// Fetch the opcode
 	uint8_t opcode{ readMem(pc) };
-	// Execute the opcode
-	(this->*functptr[opcode])();
 	// Increment the program counter
 	pc += opcodeByteLength[opcode];
+	// Execute the opcode
+	(this->*functptr[opcode])();
 	// Increment the cycle count
 	cycles += opcodeCycles[opcode];
 }
