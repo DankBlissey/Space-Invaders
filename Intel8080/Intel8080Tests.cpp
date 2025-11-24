@@ -789,3 +789,121 @@ TEST_CASE("MVI Move immediate data", "[opcodes, immediateInstructions]") {
         REQUIRE(testCpu.getMem(0x3CF4) == 0xFF);
     }
 }
+
+TEST_CASE("ADI Add immediate to accumulator", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x3E); // MVI A
+        testCpu.setMem(0x001, 0x14);
+        testCpu.setMem(0x002, 0xC6); // ADI
+        testCpu.setMem(0x003, 0x42); // 66
+        testCpu.setMem(0x004, 0xC6); // ADI
+        testCpu.setMem(0x005, 0xBE); // -66
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x14);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x56);
+        REQUIRE(testCpu.getParity() == true);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x14);
+        REQUIRE(testCpu.getParity() == true);
+        REQUIRE(testCpu.getCarry() == true);
+        REQUIRE(testCpu.getAuxCarry() == true);
+        REQUIRE(testCpu.getZero() == false);
+        REQUIRE(testCpu.getSign() == false);
+    }
+}
+
+TEST_CASE("ACI Add immediate to accumulator with carry", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x3E); // MVI A
+        testCpu.setMem(0x001, 0x56);
+        testCpu.setMem(0x002, 0xCE); // ACI
+        testCpu.setMem(0x003, 0xBE);
+        testCpu.setMem(0x004, 0xCE); // ACI
+        testCpu.setMem(0x005, 0x42);
+        testCpu.cycle();
+        REQUIRE(testCpu.getCarry() == false);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x14);
+        REQUIRE(testCpu.getCarry() == true);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x57);
+    }
+}
+
+TEST_CASE("SUI Subtract immediate from accumulator", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x3E); // MVI A
+        testCpu.setMem(0x001, 0x00);
+        testCpu.setMem(0x002, 0xD6); // SUI
+        testCpu.setMem(0x003, 0x01);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0xFF);
+        REQUIRE(testCpu.getCarry() == true);
+        REQUIRE(testCpu.getZero() == false);
+        REQUIRE(testCpu.getSign() == true);
+        REQUIRE(testCpu.getParity() == true);
+        REQUIRE(testCpu.getAuxCarry() == false);
+    }
+}
+
+TEST_CASE("SBI Subtract immediate from accumulator with carry", "[opcodes, immmediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0xAF); // XRA A
+        testCpu.setMem(0x001, 0xDE); // SBI
+        testCpu.setMem(0x002, 0x01);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0);
+        SECTION("Carry not set") {
+            testCpu.setCarry(false);
+            testCpu.cycle();
+            REQUIRE(testCpu.getA() == 0xFF);
+            REQUIRE(testCpu.getZero() == false);
+            REQUIRE(testCpu.getAuxCarry() == false);
+            REQUIRE(testCpu.getCarry() == true);
+            REQUIRE(testCpu.getParity() == true);
+            REQUIRE(testCpu.getSign() == true);
+        }
+        SECTION("Carry set") {
+            testCpu.setCarry(true);
+            testCpu.cycle();
+            REQUIRE(testCpu.getA() == 0xFE);
+            REQUIRE(testCpu.getCarry() == true);
+            REQUIRE(testCpu.getSign() == true);
+            REQUIRE(testCpu.getParity() == false);
+            REQUIRE(testCpu.getAuxCarry() == false);
+            REQUIRE(testCpu.getZero() == false);
+        }
+    }
+}
+
+TEST_CASE("ANI And immediate with accumulator", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x79); // MOV A,C
+        testCpu.setMem(0x001, 0xE6); // ANI
+        testCpu.setMem(0x002, 0x0F);
+        testCpu.setC(0x3A);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x3A);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x0A);
+    }
+}
+
+TEST_CASE("XRI Exclusive-Or immediate with accumulator") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0xEE); // XRI
+        testCpu.setMem(0x001, 0x81);
+        testCpu.setA(0x3B);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0b10111010);
+    }
+}
