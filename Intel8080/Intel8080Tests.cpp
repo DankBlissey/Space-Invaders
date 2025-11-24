@@ -935,3 +935,27 @@ TEST_CASE("CPI Compare immediate with accumulator", "[opcodes, immediateInstruct
         REQUIRE(testCpu.getCarry() == false);
     }
 }
+
+TEST_CASE("STA Store accumulator direct", "[opcodes, directAddrInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x32); // STA
+        testCpu.setMem(0x001, 0xB3);
+        testCpu.setMem(0x002, 0x05);
+        testCpu.setA(0x6E);
+        testCpu.cycle();
+        REQUIRE(testCpu.getMem(0x5B3) == 0x6E);
+    }
+}
+
+TEST_CASE("LDA Load accumulator direct", "[opcodes, directAddrInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x3A); // LDA
+        testCpu.setMem(0x001, 0x00);
+        testCpu.setMem(0x002, 0x03);
+        testCpu.setMem(0x300, 0xFF);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0xFF);
+    }
+}
