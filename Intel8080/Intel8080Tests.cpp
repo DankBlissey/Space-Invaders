@@ -907,3 +907,31 @@ TEST_CASE("XRI Exclusive-Or immediate with accumulator") {
         REQUIRE(testCpu.getA() == 0b10111010);
     }
 }
+
+TEST_CASE("ORI Or immediate with accumulator", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x79); // MOV A,C
+        testCpu.setMem(0x001, 0xF6); // ORI
+        testCpu.setMem(0x002, 0x0F);
+        testCpu.setC(0xB5);
+        testCpu.cycle();
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0xBF);
+    }
+}
+
+TEST_CASE("CPI Compare immediate with accumulator", "[opcodes, immediateInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x000, 0x3E); // MVI A
+        testCpu.setMem(0x001, 0x4A);
+        testCpu.setMem(0x002, 0xFE); // CPI
+        testCpu.setMem(0x003, 0x40);
+        testCpu.cycle();
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0x4A);
+        REQUIRE(testCpu.getZero() == false);
+        REQUIRE(testCpu.getCarry() == false);
+    }
+}
