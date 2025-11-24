@@ -987,3 +987,52 @@ TEST_CASE("LHLD Load H and L direct", "[opcodes, directAddrInstructions]") {
         REQUIRE(testCpu.getH() == 0x03);
     }
 }
+
+TEST_CASE("PCHL Load program counter", "[opcodes, jumpInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        SECTION("Example 1") {
+            testCpu.setH(0x41);
+            testCpu.setL(0x3E);
+            testCpu.setMem(0x000, 0xE9);
+            testCpu.setMem(0x413E, 0x44);
+            testCpu.cycle();
+            testCpu.cycle();
+            REQUIRE(testCpu.getB() == 0x41);
+        }
+    }
+}
+
+TEST_CASE("JMP JUMP", "[opcodes, jumpInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setA(0xFF);
+        testCpu.setMem(0x3C00, 0xC3);
+        testCpu.setMem(0x3C01, 0x00);
+        testCpu.setMem(0x3C02, 0x3E);
+        testCpu.setMem(0x3C03, 0xC6);
+        testCpu.setMem(0x3C04, 0x02);
+        testCpu.setMem(0x3D00, 0x3E);
+        testCpu.setMem(0x3D01, 0x03);
+        testCpu.setMem(0x3D02, 0xC3);
+        testCpu.setMem(0x3D03, 0x03);
+        testCpu.setMem(0x3D04, 0x3C);
+        testCpu.setMem(0x3E00, 0xAF);
+        testCpu.setMem(0x3E01, 0xC3);
+        testCpu.setMem(0x3E02, 0x00);
+        testCpu.setMem(0x3E03, 0x3D);
+        testCpu.setPc(0x3C00);
+        testCpu.cycle();
+        REQUIRE(testCpu.getPc() == 0x3E00);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 0);
+        testCpu.cycle();
+        REQUIRE(testCpu.getPc() == 0x3D00);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 3);
+        testCpu.cycle();
+        REQUIRE(testCpu.getPc() == 0x3C03);
+        testCpu.cycle();
+        REQUIRE(testCpu.getA() == 5);
+    }
+}
