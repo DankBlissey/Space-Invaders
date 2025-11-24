@@ -104,6 +104,7 @@ uint8_t CPU::cycle() {
 		// Reset the INTE flip flop
 		interruptPending = false;
 		INTE = false;
+		interruptVector = 0x00;
 		// pc is not incremented this time (idea is that it will be pushed onto the stack with rst)
 		return opcodeCycles[opcode] + extraCycles;
 	}
