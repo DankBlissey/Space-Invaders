@@ -959,3 +959,31 @@ TEST_CASE("LDA Load accumulator direct", "[opcodes, directAddrInstructions]") {
         REQUIRE(testCpu.getA() == 0xFF);
     }
 }
+
+TEST_CASE("SHLD Store H and L direct", "[opcodes, directAddrInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setH(0xAE);
+        testCpu.setL(0x29);
+        testCpu.setMem(0x000, 0x22); // SHLD
+        testCpu.setMem(0x001, 0x0A);
+        testCpu.setMem(0x002, 0x01);
+        testCpu.cycle();
+        REQUIRE(testCpu.getMem(0x10A) == 0x29);
+        REQUIRE(testCpu.getMem(0x10B) == 0xAE);
+    }
+}
+
+TEST_CASE("LHLD Load H and L direct", "[opcodes, directAddrInstructions]") {
+    testCpu.init();
+    SECTION("Manual example") {
+        testCpu.setMem(0x25B, 0xFF);
+        testCpu.setMem(0x25C, 0x03);
+        testCpu.setMem(0x000, 0x2A); // LHLD
+        testCpu.setMem(0x001, 0x5B);
+        testCpu.setMem(0x002, 0x02);
+        testCpu.cycle();
+        REQUIRE(testCpu.getL() == 0xFF);
+        REQUIRE(testCpu.getH() == 0x03);
+    }
+}
