@@ -18,6 +18,8 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(tests "Intel8080Tests.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp")
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
+add_executable(compare "CompareEmulators.cpp" "ExampleEmulator/i8080.h" "ExampleEmulator/i8080.c" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp")
+
 set_property(TARGET Intel8080 PROPERTY CXX_STANDARD 23)
 set_property(TARGET tests PROPERTY CXX_STANDARD 23)
 
