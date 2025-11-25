@@ -60,10 +60,6 @@ void CPU::reset() {
 	INTE = STOPPED = interruptPending = false;
 }
 
-void CPU::loadProgram() {
-	// Do nothing
-}
-
 void CPU::requestInterrupt(uint8_t vector) {
 	if (INTE) {
 		interruptPending = true;
@@ -106,6 +102,10 @@ uint8_t CPU::cycle() {
 	return opcodeCycles[opcode] + extraCycles;
 }
 
+bool CPU::halted() {
+	return STOPPED;
+}
+
 
 // Clear memory
 void CPU::clearMem() {
@@ -120,21 +120,29 @@ uint8_t CPU::readMem(uint16_t addr) {
 void CPU::writeMem(uint16_t addr, uint8_t data) {
 	(*mem)[addr] = data;
 }
+// Get the size of memory
+size_t CPU::getMemSize() const {
+	return (*mem).size();
+}
 // Read a byte from the input bus
 uint8_t CPU::readIn(uint8_t port) {
-	return in[port];
+	uint8_t input {in[port]};
+	in[port] = 0;
+	return input;
 }
 // Read a byte from the output bus
 uint8_t CPU::readOut(uint8_t port) {
-	return out[port];
-}
-// Write a byte to the output bus
-void CPU::writeOut(uint8_t port, uint8_t data) {
-	out[port] = data;
+	uint8_t output {out[port]};
+	out[port] = 0;
+	return output;
 }
 // Write a byte to the input bus
 void CPU::writeIn(uint8_t port, uint8_t data) {
 	in[port] = data;
+}
+// Write a byte to the output bus
+void CPU::writeOut(uint8_t port, uint8_t data) {
+	out[port] = data;
 }
 // Write a 16-bit value to the BC register pair
 void CPU::writePairB(uint16_t data) {

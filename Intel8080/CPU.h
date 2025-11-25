@@ -13,17 +13,20 @@ class CPU {
 		CPU();
 		CPU(const CPU&);
 		CPU(uint16_t);
-		void init();
-		void init(uint16_t);
-		void reset();
+		void init(); // Initialize
+		void init(uint16_t); // Initialize with starting program counter
+
+		void reset(); // Intel 8080 reset
 
 		void clearMem();
 		uint8_t readMem(uint16_t);
 		void writeMem(uint16_t, uint8_t);
 
-		uint8_t cycle();					// CPU emulation cycle
+		size_t getMemSize() const;
 
-		void loadProgram(); // Load a program into memory
+		bool halted();
+
+		uint8_t cycle();					// CPU emulation cycle
 
 		void writeIn(uint8_t, uint8_t);
 
