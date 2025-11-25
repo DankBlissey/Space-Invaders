@@ -12,7 +12,14 @@ class CPU {
 	public:
 		CPU();
 		CPU(const CPU&);
+		CPU(uint16_t);
 		void init();
+		void init(uint16_t);
+		void reset();
+
+		void clearMem();
+		uint8_t readMem(uint16_t);
+		void writeMem(uint16_t, uint8_t);
 
 		uint8_t cycle();					// CPU emulation cycle
 
@@ -29,9 +36,6 @@ class CPU {
 		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
 
 	protected:
-		void clearMem();
-		uint8_t readMem(uint16_t);
-		void writeMem(uint16_t, uint8_t);
 		uint8_t readIn(uint8_t);
 		void writeOut(uint8_t, uint8_t);
 
@@ -49,22 +53,22 @@ class CPU {
 
 		auto tiedRegisters() const;
 
-		uint16_t pc;					// Program counter
-		uint16_t sp;					// Stack pointer
-		std::unique_ptr<std::array<uint8_t, 65536>> mem; // 64KB of memory (allocated to heap with unique pointer)
-		uint8_t B, C, D, E, H, L, A;	// General purpose registers
-		bool Sign, Zero, AuxCarry, 
-			Parity, Carry;				// Flags
-		bool INTE, interruptPending; 	// Interrupt enable flip/flop
-		uint8_t interruptVector;
-		bool STOPPED;					// CPU stopped state, happens if halt instruction happens, only an interrupt resolves it
-		std::array<uint8_t, 256> in;	// input bus
-		std::array<uint8_t, 256> out;	// Output bus
+		uint16_t pc {0};					// Program counter
+		uint16_t sp = {0};					// Stack pointer
+		std::unique_ptr<std::array<uint8_t, 65536>> mem = std::make_unique<std::array<uint8_t, 65536>>(); // 64KB of memory (allocated to heap with unique pointer)
+		uint8_t B {0}, C {0}, D {0}, E {0}, H {0}, L {0}, A {0};	// General purpose registers
+		bool Sign {false}, Zero {false}, AuxCarry {false}, 
+			Parity {false}, Carry {false};				// Flags
+		bool INTE {false}, interruptPending {false}; 	// Interrupt enable flip/flop
+		uint8_t interruptVector {};
+		bool STOPPED {false};					// CPU stopped state, happens if halt instruction happens, only an interrupt resolves it
+		std::array<uint8_t, 256> in {0};	// input bus
+		std::array<uint8_t, 256> out {0};	// Output bus
 
 		using OpFunc = void (CPU::*)();
 		static const OpFunc functptr[256];
 
-		uint8_t extraCycles;			// Extra cycles for when conditional branches do an action
+		uint8_t extraCycles {0};			// Extra cycles for when conditional branches do an action
 
 		uint16_t readImmediate();
 

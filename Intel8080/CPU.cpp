@@ -21,44 +21,17 @@ const CPU::OpFunc CPU::functptr[256] = {
 		& CPU::rp, & CPU::popPSW, & CPU::jp, & CPU::di, & CPU::cp, & CPU::pushPSW, & CPU::ori, & CPU::rst6, & CPU::rm, & CPU::sphl, & CPU::jm, & CPU::ei, & CPU::cm, & CPU::call, & CPU::cpi, & CPU::rst7
 };
 
-CPU::CPU()
-	: mem(std::make_unique<std::array<uint8_t, 65536>>()) {
-	pc = 0;
-	sp = 0;
-	// clear input and output buses
-	for (int i = 0; i < 256; ++i) {
-		in[i] = 0;
-		out[i] = 0;
-	}
-	// Clear memory
-	clearMem();
-	extraCycles = 0;
-	B = C = D = E = H = L = A = 0;
-	STOPPED = INTE = Sign = Zero = AuxCarry = Parity = Carry = false;
-}
+CPU::CPU() = default;
 
 CPU::CPU(const CPU& c)
-	: mem(std::make_unique<std::array<uint8_t, 65536>>(*c.mem)) {
-	pc = c.pc;
-	sp = c.sp;
-	in = c.in;
-	out = c.out;
-	extraCycles = c.extraCycles;
-	B = c.B;
-	C = c.C;
-	D = c.D;
-	E = c.E;
-	H = c.H;
-	L = c.L;
-	A = c.A;
-	Sign = c.Sign;
-	Zero = c.Zero;
-	AuxCarry = c.AuxCarry;
-	Parity = c.Parity;
-	Carry = c.Carry;
-	INTE = c.INTE;
-	STOPPED = c.STOPPED;
-}
+	: mem(std::make_unique<std::array<uint8_t, 65536>>(*c.mem))
+	, pc(c.pc), sp(c.sp), in(c.in), out(c.out), extraCycles(c.extraCycles)
+	, B(c.B), C(c.C), D(c.D), E(c.E), H(c.H), L(c.L), A(c.A)
+	, Sign(c.Sign), Zero(c.Zero), AuxCarry(c.AuxCarry), Parity(c.Parity), Carry(c.Carry)
+	, INTE(c.INTE), STOPPED(c.STOPPED), interruptPending(c.interruptPending)
+	, interruptVector(c.interruptVector) {}
+
+CPU::CPU(uint16_t programCounter) : pc(programCounter) {}
 
 // Initialise the CPU
 void CPU::init() {
@@ -73,7 +46,18 @@ void CPU::init() {
 	clearMem();
 	extraCycles = 0;
 	B = C = D = E = H = L = A = 0;
-	STOPPED = INTE = Sign = Zero = AuxCarry = Parity = Carry = false;
+	interruptPending = STOPPED = INTE = Sign = Zero = AuxCarry = Parity = Carry = false;
+	interruptVector = 0;
+}
+
+void CPU::init(uint16_t programCounter) {
+	init();
+	pc = programCounter;
+}
+
+void CPU::reset() {
+	pc = 0;
+	INTE = STOPPED = interruptPending = false;
 }
 
 void CPU::loadProgram() {
@@ -84,6 +68,7 @@ void CPU::requestInterrupt(uint8_t vector) {
 	if (INTE) {
 		interruptPending = true;
 		interruptVector = vector;
+		STOPPED = false;
 	}
 }
 
@@ -96,7 +81,6 @@ uint8_t CPU::cycle() {
 	extraCycles = 0;
 	uint8_t opcode;
 	if (interruptPending) {
-		STOPPED = false;
 		// Use the interrupt opcode provided
 		opcode = readMem(interruptVector);
 		// Execute the opcode
