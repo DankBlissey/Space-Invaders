@@ -1,5 +1,6 @@
 #include "CPU.h"
 #include "OpcodeTableValues.cpp"
+#include <iostream>
 
 // Array of function pointers for each opcode
 const CPU::OpFunc CPU::functptr[256] = {
@@ -93,12 +94,16 @@ uint8_t CPU::cycle() {
 		return 4;
 	}
 	// Fetch the opcode
+	std::cout << "Fetching" << "\n";
 	currentInstruction = readMem(pc);
 	// Increment the program counter
+	std::cout << "Incrementing" << "\n";
 	pc += opcodeByteLength[currentInstruction];
 	// Execute the opcode
+	std::cout << "Executing current instruction: " << std::hex << static_cast<int>(currentInstruction) << "\n";
 	(this->*functptr[currentInstruction])();
 	// return number of cycles that instruction took
+	std::cout << "Returning cycles" << "\n";
 	return opcodeCycles[currentInstruction] + extraCycles;
 }
 
@@ -176,14 +181,14 @@ void CPU::writePairPSW(uint16_t data) {
 	A = (data & 0xFF00) >> 8;
 	uint8_t Flags = data & 0x00FF;
 	// Sign, Zero, 0, AuxCarry, 0, Parity, 1, Carry
-	Sign = Flags & 0b00000001;
-	Zero = Flags & 0b00000010;
-	// 0b00000100 is always 0
-	AuxCarry = Flags & 0b00001000;
-	// 0b00010000 is always 0
-	Parity = Flags & 0b00100000;
-	// 0b01000000 is always 1
-	Carry = Flags & 0b10000000;
+	Sign = Flags & 0b10000000;
+	Zero = Flags & 0b01000000;
+	// 0b00100000 is always 0
+	AuxCarry = Flags & 0b00010000;
+	// 0b00001000 is always 0
+	Parity = Flags & 0b00000100;
+	// 0b00000010 is always 1
+	Carry = Flags & 0b00000001;
 }
 // Read a 16 bit value from the AF register pair
 uint16_t CPU::readPairPSW() {

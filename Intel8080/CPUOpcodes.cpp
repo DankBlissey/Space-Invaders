@@ -26,11 +26,11 @@ static bool calculateAuxCarryINR(uint8_t value) {
 }
 
 static bool calculateAuxCarryDCR(uint8_t value) {
-	return (value & 0x0F) == 0;
+	return !((value & 0x0F) == 0); // Doesn't seem to be flipped but example emulator flips it
 }
 
-static bool calculateAuxCarryADD(uint8_t a, uint8_t b) {
-	return ((a & 0x0F) + (b & 0x0F)) > 0x0F;
+static bool calculateAuxCarryADD(uint8_t a, uint8_t b, uint8_t carry = 0) {
+	return ((a & 0x0F) + (b & 0x0F) + (carry & 0x0F)) > 0x0F;
 }
 
 static bool calculateAuxCarrySUB(uint8_t a, uint8_t b) {
@@ -38,8 +38,8 @@ static bool calculateAuxCarrySUB(uint8_t a, uint8_t b) {
 	return ~(a ^ result ^ b) & 0x10;
 }
 
-static bool calculateCarryADD(uint8_t a, uint8_t b) {
-	return (uint16_t)a + (uint16_t)b > 0xFF;
+static bool calculateCarryADD(uint8_t a, uint8_t b, uint8_t carry = 0) {
+	return (uint16_t)a + (uint16_t)b + (uint16_t)carry > 0xFF;
 }
 
 static uint8_t twosComplement(uint8_t value) {
@@ -99,10 +99,10 @@ void CPU::adc(uint8_t reg) {
 }
 
 void CPU::sub(uint8_t reg) {
-	reg = twosComplement(reg);
-	AuxCarry = calculateAuxCarryADD(A, reg);
-	Carry = !calculateCarryADD(A, reg);
-	A += reg;
+	reg = ~reg;
+	AuxCarry = calculateAuxCarryADD(A, reg, 1);
+	Carry = !calculateCarryADD(A, reg, 1);
+	A += reg + 1;
 	Parity = checkParity(A);
 	Zero = checkZero(A);
 	Sign = checkSign(A);
@@ -112,16 +112,17 @@ void CPU::sbb(uint8_t reg) {
 	if (Carry) {
 		reg++;
 	}
-	reg = twosComplement(reg);
-	AuxCarry = calculateAuxCarryADD(A, reg);
-	Carry = !calculateCarryADD(A, reg);
-	A += reg;
+	reg = ~reg;
+	AuxCarry = calculateAuxCarryADD(A, reg, 1);
+	Carry = !calculateCarryADD(A, reg, 1);
+	A += reg + 1;
 	Parity = checkParity(A);
 	Zero = checkZero(A);
 	Sign = checkSign(A);
 }
 
 void CPU::ana(uint8_t reg) {
+	AuxCarry = ((A | reg) & 0x08) != 0;
 	A = A & reg;
 	Carry = false;
 	Parity = checkParity(A);
@@ -141,16 +142,17 @@ void CPU::xra(uint8_t reg) {
 void CPU::ora(uint8_t reg) {
 	A = A | reg;
 	Carry = false;
+	AuxCarry = false;
 	Parity = checkParity(A);
 	Zero = checkZero(A);
 	Sign = checkSign(A);
 }
 
 void CPU::cmp(uint8_t reg) {
-	uint8_t negativeReg = twosComplement(reg);
-	uint8_t subValue = A + negativeReg;
-	AuxCarry = calculateAuxCarryADD(A, negativeReg);
-	Carry = !calculateCarryADD(A,negativeReg);
+	uint8_t negativeReg = ~reg;
+	uint8_t subValue = A + negativeReg + 1;
+	AuxCarry = calculateAuxCarryADD(A, negativeReg, 1);
+	Carry = !calculateCarryADD(A,negativeReg, 1);
 	Sign = checkSign(subValue);
 	Parity = checkParity(subValue);
 	Zero = checkZero(subValue);
@@ -345,6 +347,7 @@ void CPU::ral() {
 }
 
 void CPU::daa() {
+	bool oldCarry = Carry;
 	if ((A & 0x0F) > 9 || AuxCarry) {
 		uint8_t oldA{ A };
 		A += 0x06;
@@ -353,7 +356,7 @@ void CPU::daa() {
 	if ((A & 0xF0) > 0x90 || Carry) {
 		uint8_t oldA{ A };
 		A += 0x60;
-		Carry = calculateCarryADD(oldA, 0x60);
+		Carry = (calculateCarryADD(oldA, 0x60) || oldCarry);
 	}
 	Parity = checkParity(A);
 	Zero = (A == 0);
@@ -977,7 +980,7 @@ void CPU::cmpC() {
 }
 
 void CPU::cmpD() {
-	cmpD();
+	cmp(D);
 }
 
 void CPU::cmpE() {
