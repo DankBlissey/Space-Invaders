@@ -1,4 +1,4 @@
-﻿#include "TestCPU.h"
+﻿#include "CPU.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -82,8 +82,8 @@ void loadTestHandlerAlt(CPU& cpu) {
     cpu.writeMem(0x0007, 0xC9);
 }
 
-bool runTest(CPU& cpu, const string& file, unsigned long expectedCycles) {
-	std::cout << "TEST: " << file << "\n";
+bool runTest(CPU& cpu, const string& file) {
+	std::cout << "TEST: " << file << "\n\n";
 	cpu.init(0x0100, 0xFFFF);
 	if (!loadROM(cpu, file, 0x0100)) {
 		return false;
@@ -94,19 +94,21 @@ bool runTest(CPU& cpu, const string& file, unsigned long expectedCycles) {
 	while(!cpu.halted()) {
 		instructions++;
 		cycles += cpu.cycle();
-		std::cout << static_cast<char>(cpu.readOut(0));
+		uint8_t output {cpu.readOut(0)};
+		if (output > 0) {
+			std::cout << static_cast<char>(output);
+		}
 	}
-	std::cout << "Test finished, cycles completed: " << std::dec << cycles << "\n";
+	std::cout << "Test finished, cycles completed: " << std::dec << cycles << "\n\n";
 	return true;
 }
 
 int main()
 {
-	//TestCPU cpu = TestCPU();
 	CPU cpu = CPU();
-	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/CPUTEST2.COM", 255653383LU);
-	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/TST8080.COM", 4924);
-	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/8080PRE.COM", 7817);
-	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/8080EXM.COM", 7817);
+	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/CPUTEST2.COM");
+	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/TST8080.COM");
+	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/8080PRE.COM");
+	runTest(cpu, "/home/john/Development/Projects/Space-Invaders/Intel8080/CPU-Test-ROMs/8080EXM.COM");
 	return 0;
 }
