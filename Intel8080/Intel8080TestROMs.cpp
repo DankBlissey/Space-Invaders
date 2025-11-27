@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <memory>
+#include "Memory.h"
 using std::string;
 
 bool loadROM(CPU& cpu, const string& fileName, size_t startAddress = 0) {
@@ -75,6 +77,7 @@ void loadTestHandler(CPU& cpu) {
 bool runTest(CPU& cpu, const string& file) {
 	std::cout << "TEST: " << file << "\n\n";
 	cpu.init(0x0100, 0xFFFF);
+	cpu.setOutPort(0, [&](uint8_t character){ std::cout << static_cast<char>(character); });
 	if (!loadROM(cpu, file, 0x0100)) {
 		return false;
 	}
@@ -84,10 +87,6 @@ bool runTest(CPU& cpu, const string& file) {
 	while(!cpu.halted()) {
 		instructions++;
 		cycles += cpu.cycle();
-		uint8_t output {cpu.readOut(0)};
-		if (output != 0) {
-			std::cout << static_cast<char>(output);
-		}
 	}
 	//std::cout << "\n" << "Test finished, cycles completed: " << std::dec << cycles << "\n\n";
 	return true;
@@ -95,10 +94,15 @@ bool runTest(CPU& cpu, const string& file) {
 
 int main()
 {
-	CPU cpu = CPU();
-	runTest(cpu, "CPU-Test-ROMs/CPUTEST.COM");
-	runTest(cpu, "CPU-Test-ROMs/TST8080.COM");
-	runTest(cpu, "CPU-Test-ROMs/8080PRE.COM");
-	runTest(cpu, "CPU-Test-ROMs/8080EXM.COM");
+	std::unique_ptr<CPU> cpu = std::make_unique<CPU>(CPU());
+	std::unique_ptr<Memory> mem = std::make_unique<Memory>(Memory());
+	cpu->readMem = [&](uint16_t addr){ return mem->read(addr); };
+	cpu->writeMem = [&](uint16_t addr, uint8_t data){ mem->write(addr, data); };
+	cpu->clearMem = [&](){ mem->clear(); };
+	cpu->getMemSize = [&](){ return mem->size(); };
+	runTest(*cpu, "CPU-Test-ROMs/CPUTEST.COM");
+	runTest(*cpu, "CPU-Test-ROMs/TST8080.COM");
+	runTest(*cpu, "CPU-Test-ROMs/8080PRE.COM");
+	runTest(*cpu, "CPU-Test-ROMs/8080EXM.COM");
 	return 0;
 }

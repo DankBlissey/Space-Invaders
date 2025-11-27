@@ -1,14 +1,19 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 #include <array>
+#include<functional>
 
 using std::uint8_t;
 using std::uint16_t;
 using std::int8_t;
 
 class CPU {
+	using InHandler = std::function<uint8_t()>;
+	using OutHandler = std::function<void(uint8_t)>;
+	using MemReadHandler = std::function<uint8_t(uint16_t)>;
+	using MemWriteHandler = std::function<void(uint16_t, uint8_t)>;
+	using OpFunc = void (CPU::*)();
 	public:
 		CPU();
 		CPU(const CPU&);
@@ -18,19 +23,20 @@ class CPU {
 
 		void reset(); // Intel 8080 reset
 
-		void clearMem();
-		uint8_t readMem(uint16_t);
-		virtual void writeMem(uint16_t, uint8_t);
+		MemReadHandler readMem = [](uint16_t) {return uint8_t(0); };
+		MemWriteHandler writeMem = [](uint16_t, uint8_t){};
 
-		size_t getMemSize() const;
+		std::function<size_t()> getMemSize = [](){ return size_t(0); };
+		std::function<void()> clearMem = [](){};
+
 
 		bool halted();
 
-		virtual uint8_t cycle();					// CPU emulation cycle
+		virtual uint8_t cycle();		// CPU emulation cycle
 
-		void writeIn(uint8_t, uint8_t);
+		void setInPort(uint8_t, InHandler);
 
-		uint8_t readOut(uint8_t);
+		void setOutPort(uint8_t, OutHandler);
 
 		void requestInterrupt(uint8_t);
 
@@ -42,7 +48,7 @@ class CPU {
 
 	protected:
 		uint8_t readIn(uint8_t);
-		virtual void writeOut(uint8_t, uint8_t);
+		void writeOut(uint8_t, uint8_t);
 
 		void writePairB(uint16_t);
 		uint16_t readPairB();
@@ -62,17 +68,17 @@ class CPU {
 
 		uint16_t pc {0};					// Program counter
 		uint16_t sp = {0};					// Stack pointer
-		std::unique_ptr<std::array<uint8_t, 65536>> mem = std::make_unique<std::array<uint8_t, 65536>>(); // 64KB of memory (allocated to heap with unique pointer)
+		//std::unique_ptr<std::array<uint8_t, 65536>> mem = std::make_unique<std::array<uint8_t, 65536>>(); // 64KB of memory (allocated to heap with unique pointer)
 		uint8_t B {0}, C {0}, D {0}, E {0}, H {0}, L {0}, A {0};	// General purpose registers
 		bool Sign {false}, Zero {false}, AuxCarry {false}, 
 			Parity {false}, Carry {false};				// Flags
 		bool INTE {false}, interruptPending {false}; 	// Interrupt enable flip/flop
 		uint8_t interruptVector {};
 		bool STOPPED {false};					// CPU stopped state, happens if halt instruction happens, only an interrupt resolves it
-		std::array<uint8_t, 256> in {0};	// input bus
-		std::array<uint8_t, 256> out {0};	// Output bus
 
-		using OpFunc = void (CPU::*)();
+		std::array<InHandler, 256> in {};
+		std::array<OutHandler, 256> out {};
+
 		static const OpFunc functptr[256];
 
 		uint8_t extraCycles {0};			// Extra cycles for when conditional branches do an action

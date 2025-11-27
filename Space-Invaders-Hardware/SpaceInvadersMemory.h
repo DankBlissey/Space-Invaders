@@ -1,12 +1,14 @@
-#include "../Intel8080/CPU.h"
+#include "../Intel8080/Memory.h"
 
-class Hardware : CPU {
+// Intel 8080 CPU with setup for barring writes to ROM and for handling RAM Mirroring
+// Also features a shift register
+class SpaceInvadersMemory : Memory {
     public: 
-        void writeMem(uint16_t, uint8_t);
-        uint8_t readMem(uint16_t);
+        uint8_t read(uint16_t);
+        void write(uint16_t, uint8_t);
+        void clear();
         void loadMem(uint16_t, uint8_t);
     private:
-        void writeOut(uint8_t, uint8_t);
         const uint16_t romStart {0x0000};
         const uint16_t romEnd {0x1FFF};
         const uint16_t ramStart {0x2000};

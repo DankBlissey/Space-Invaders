@@ -25,8 +25,7 @@ CPU::CPU() = default;
 
 // For duplicating CPU object with a deep copy that is memory-safe
 CPU::CPU(const CPU& c)
-	: mem(std::make_unique<std::array<uint8_t, 65536>>(*c.mem))
-	, pc(c.pc), sp(c.sp), in(c.in), out(c.out), extraCycles(c.extraCycles)
+	: pc(c.pc), sp(c.sp), in(c.in), out(c.out), extraCycles(c.extraCycles)
 	, B(c.B), C(c.C), D(c.D), E(c.E), H(c.H), L(c.L), A(c.A)
 	, Sign(c.Sign), Zero(c.Zero), AuxCarry(c.AuxCarry), Parity(c.Parity), Carry(c.Carry)
 	, INTE(c.INTE), STOPPED(c.STOPPED), interruptPending(c.interruptPending)
@@ -107,24 +106,27 @@ bool CPU::halted() {
 	return STOPPED;
 }
 
+void CPU::setInPort(uint8_t port, InHandler handler) {
+	in[port] = handler;
+}
 
-// Clear memory
-void CPU::clearMem() {
-	for (int i = 0; i < 65536; ++i)
-		(*mem)[i] = 0;
+void CPU::setOutPort(uint8_t port, OutHandler handler) {
+	out[port] = handler;
 }
-// Read a byte from memory
-uint8_t CPU::readMem(uint16_t addr) {
-	return (*mem)[addr];
+
+uint8_t CPU::readIn(uint8_t port) {
+	if (in[port]) {
+		return in[port]();
+	}
+	return 0xFF;
 }
-// Write a byte to memory
-void CPU::writeMem(uint16_t addr, uint8_t data) {
-	(*mem)[addr] = data;
+
+void CPU::writeOut(uint8_t port, uint8_t value) {
+	if (out[port]) {
+		out[port](value);
+	}
 }
-// Get the size of memory
-size_t CPU::getMemSize() const {
-	return (*mem).size();
-}
+/*
 // Read a byte from the input bus
 uint8_t CPU::readIn(uint8_t port) {
 	uint8_t input {in[port]};
@@ -137,14 +139,17 @@ uint8_t CPU::readOut(uint8_t port) {
 	out[port] = 0;
 	return output;
 }
+
 // Write a byte to the input bus
 void CPU::writeIn(uint8_t port, uint8_t data) {
 	in[port] = data;
 }
+
 // Write a byte to the output bus
 void CPU::writeOut(uint8_t port, uint8_t data) {
 	out[port] = data;
 }
+*/
 // Write a 16-bit value to the BC register pair
 void CPU::writePairB(uint16_t data) {
 	B = (data & 0xFF00) >> 8;
@@ -200,13 +205,13 @@ uint16_t CPU::readPairPSW() {
 }
 // Push a 16-bit value onto the stack
 void CPU::stackPush(uint16_t data) {
-	(*mem)[sp-1] = (data & 0xFF00) >> 8;
-	(*mem)[sp-2] = data & 0x00FF;
+	writeMem(sp-1, (data & 0xFF00) >> 8);
+	writeMem(sp-2, data & 0x00FF);
 	sp -= 2;
 }
 // Pop a 16-bit value from the stack
 uint16_t CPU::stackPop() {
-	uint16_t pair = ((*mem)[sp + 1] << 8) | (*mem)[sp];
+	uint16_t pair = (readMem(sp+1) << 8) | readMem(sp);
 	sp += 2;
 	return pair;
 }

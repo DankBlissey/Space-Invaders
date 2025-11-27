@@ -7,7 +7,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/Intel8080/CPU-Test-ROMs
      DESTINATION ${CMAKE_BINARY_DIR}/Intel8080)
 
 # Add source to this project's executable.
-add_executable (Intel8080TestROMs "Intel8080TestROMs.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp")
+add_executable (Intel8080TestROMs "Intel8080TestROMs.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "Memory.h" "Memory.cpp")
 
 Include(FetchContent)
 
