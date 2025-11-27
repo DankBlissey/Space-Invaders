@@ -23,6 +23,7 @@ const CPU::OpFunc CPU::functptr[256] = {
 
 CPU::CPU() = default;
 
+// For duplicating CPU object with a deep copy that is memory-safe
 CPU::CPU(const CPU& c)
 	: mem(std::make_unique<std::array<uint8_t, 65536>>(*c.mem))
 	, pc(c.pc), sp(c.sp), in(c.in), out(c.out), extraCycles(c.extraCycles)
@@ -49,7 +50,7 @@ void CPU::init() {
 	interruptPending = STOPPED = INTE = Sign = Zero = AuxCarry = Parity = Carry = false;
 	interruptVector = 0;
 }
-
+// Initialize the CPU with specified program counter and stack pointer
 void CPU::init(uint16_t programCounter, uint16_t stackPointer) {
 	init();
 	pc = programCounter;
@@ -93,16 +94,12 @@ uint8_t CPU::cycle() {
 		return 4;
 	}
 	// Fetch the opcode
-	//std::cout << "Fetching" << "\n";
 	currentInstruction = readMem(pc);
 	// Increment the program counter
-	//std::cout << "Incrementing" << "\n";
 	pc += opcodeByteLength[currentInstruction];
 	// Execute the opcode
-	//std::cout << "Executing current instruction: " << std::hex << static_cast<int>(currentInstruction) << "\n";
 	(this->*functptr[currentInstruction])();
 	// return number of cycles that instruction took
-	//std::cout << "Returning cycles" << "\n";
 	return opcodeCycles[currentInstruction] + extraCycles;
 }
 
