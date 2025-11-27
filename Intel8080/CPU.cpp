@@ -108,43 +108,19 @@ void CPU::setInPort(uint8_t port, InHandler handler) {
 void CPU::setOutPort(uint8_t port, OutHandler handler) {
 	out[port] = handler;
 }
-
+// Call the function at port x on in to simulate reading via the input bus
 uint8_t CPU::readIn(uint8_t port) {
 	if (in[port]) {
 		return in[port]();
 	}
 	return 0xFF;
 }
-
+// Call the function at port x on out to simulate outputting via the output bus
 void CPU::writeOut(uint8_t port, uint8_t value) {
 	if (out[port]) {
 		out[port](value);
 	}
 }
-/*
-// Read a byte from the input bus
-uint8_t CPU::readIn(uint8_t port) {
-	uint8_t input {in[port]};
-	in[port] = 0;
-	return input;
-}
-// Read a byte from the output bus
-uint8_t CPU::readOut(uint8_t port) {
-	uint8_t output {out[port]};
-	out[port] = 0;
-	return output;
-}
-
-// Write a byte to the input bus
-void CPU::writeIn(uint8_t port, uint8_t data) {
-	in[port] = data;
-}
-
-// Write a byte to the output bus
-void CPU::writeOut(uint8_t port, uint8_t data) {
-	out[port] = data;
-}
-*/
 // Write a 16-bit value to the BC register pair
 void CPU::writePairB(uint16_t data) {
 	B = (data & 0xFF00) >> 8;

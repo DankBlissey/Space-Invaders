@@ -18,7 +18,7 @@ uint8_t TestCPU::getExtraCycles() {
 std::ostream& operator<<(std::ostream& os, const TestCPU& cpu) {
     os << "-------------------------CPU State --------------------------\n"
         << "PC: " << std::hex << static_cast<int>(cpu.pc) << ", SP: " << std::hex << static_cast<int>(cpu.sp) << "\n"
-        << "Next Instruction: " << std::hex << static_cast<int>((*cpu.mem)[cpu.pc]) << "\n"
+        << "Next Instruction: " << std::hex << static_cast<int>(cpu.readMem(cpu.pc)) << "\n"
         << "Instruction done: Opcode: " << std::hex << static_cast<int>(cpu.currentInstruction) << ", Operand bytes: ";
     if (cpu.instructionSecondByte.has_value()) {
         os << static_cast<int>(cpu.instructionSecondByte.value());
