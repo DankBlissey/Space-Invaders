@@ -5,15 +5,16 @@
 
 class TestCPU: public CPU {
     public:
+        TestCPU(Memory&);
         friend struct Intel_8080_State;
         friend std::ostream& operator <<(std::ostream&, const TestCPU&);
         uint16_t getPc();
         uint16_t getSp();
         uint8_t getExtraCycles();
 
-        uint8_t getMem(uint16_t);
+        uint8_t getMem(uint16_t) const;
 
-        uint8_t cycle();
+        uint8_t cycle() override;
 
         uint16_t getPairB();
         uint16_t getPairD();

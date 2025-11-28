@@ -1,23 +1,39 @@
 #include "SpaceInvadersMemory.h"
 
-// Write mem doesn't allow writes to ROM and handles mirrored addresses
+SpaceInvadersMemory::SpaceInvadersMemory() {
+    buildPointerTable();
+}
+// Build table of pointers to relevant memory addresses. Enables very fast read and write while keeping memory arrays separate
+void SpaceInvadersMemory::buildPointerTable() {
+    for (uint16_t addr = 0; addr < memorySize; addr++) {
+        if (addr < ramStart) {
+            memoryPointers[addr] = &rom[addr];
+        } else if (addr < vRamStart) {
+            memoryPointers[addr] = &ram[addr - ramStart];
+        } else {
+            memoryPointers[addr] = &vRam[addr- vRamStart];
+        }
+    }
+}
+// Read byte from memory
+uint8_t SpaceInvadersMemory::read(uint16_t addr) const {
+    return *memoryPointers[addr & ramMask];
+}
+// Write a byte to memory
 void SpaceInvadersMemory::write(uint16_t addr, uint8_t data) {
-    if (addr > ramStart) {
-        memory[ramStart + ((addr-ramStart) & ramMask)] = data;
+    uint16_t masked = addr & ramMask;
+    if (masked < ramStart) {
+        // ROM is read-only
+        return;
     }
+    *memoryPointers[masked] = data;
 }
-// Read mem handles mirrored addresses
-uint8_t SpaceInvadersMemory::read(uint16_t addr) {
-    if (addr > ramStart) {
-        return memory[ramStart + ((addr - ramStart) & ramMask)];
-    }
-    return memory[addr];
-}
-// Write mem with ability to write to ROM: For loading ROMs
-void SpaceInvadersMemory::loadMem(uint16_t addr, uint8_t data) {
-    memory[addr] = data;
-}
-// Clear mem but don't clear the ROM
+// Clear ram and Vram
 void SpaceInvadersMemory::clear() {
-    std::fill(memory.begin() + ramStart, memory.end(), 0);
+    ram.fill(0);
+    vRam.fill(0);
+}
+// return the size of memory
+std::size_t SpaceInvadersMemory::size() const {
+    return static_cast<std::size_t>(memorySize);
 }

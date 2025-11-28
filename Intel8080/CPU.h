@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <array>
 #include<functional>
+#include "Memory.h"
 
 using std::uint8_t;
 using std::uint16_t;
@@ -11,24 +12,18 @@ using std::int8_t;
 class CPU {
 	using InHandler = std::function<uint8_t()>;
 	using OutHandler = std::function<void(uint8_t)>;
-	using MemReadHandler = std::function<uint8_t(uint16_t)>;
-	using MemWriteHandler = std::function<void(uint16_t, uint8_t)>;
 	using OpFunc = void (CPU::*)();
 	public:
-		CPU();
-		CPU(const CPU&);
-		CPU(uint16_t);
+		CPU(Memory&);
 		void init(); // Initialize
 		void init(uint16_t, uint16_t); // Initialize with starting program counter
 
 		void reset(); // Intel 8080 reset
 
-		// Memory handlers (set functions for what these handlers will return based on the hardware you are trying to emulate)
-		MemReadHandler readMem = [](uint16_t) {return uint8_t(0); };
-		MemWriteHandler writeMem = [](uint16_t, uint8_t){};
-		std::function<size_t()> getMemSize = [](){ return size_t(0); };
-		std::function<void()> clearMem = [](){};
-
+		uint8_t readMem(uint16_t) const;
+		void writeMem(uint16_t, uint8_t);
+		void clearMem();
+		size_t getMemSize();
 
 		bool halted();
 
@@ -41,10 +36,6 @@ class CPU {
 		void requestInterrupt(uint8_t);
 
 		void stopInterrupt();
-
-		bool operator==(CPU const&) const; // Overwrite == operator to compare the registers of the cpu
-
-		CPU& operator=(const CPU&);
 
 	protected:
 		uint8_t readIn(uint8_t);
@@ -68,6 +59,7 @@ class CPU {
 
 		uint16_t pc {0};					// Program counter
 		uint16_t sp = {0};					// Stack pointer
+		Memory& mem;
 		uint8_t B {0}, C {0}, D {0}, E {0}, H {0}, L {0}, A {0};	// General purpose registers
 		bool Sign {false}, Zero {false}, AuxCarry {false}, 
 			Parity {false}, Carry {false};				// Flags

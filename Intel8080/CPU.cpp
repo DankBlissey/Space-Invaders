@@ -20,20 +20,10 @@ const CPU::OpFunc CPU::functptr[256] = {
 		& CPU::rpo, & CPU::popH, & CPU::jpo, & CPU::xthl, & CPU::cpo, & CPU::pushH, & CPU::ani, & CPU::rst4, & CPU::rpe, & CPU::pchl, & CPU::jpe, & CPU::xchg, & CPU::cpe, & CPU::call, & CPU::xri, & CPU::rst5,
 		& CPU::rp, & CPU::popPSW, & CPU::jp, & CPU::di, & CPU::cp, & CPU::pushPSW, & CPU::ori, & CPU::rst6, & CPU::rm, & CPU::sphl, & CPU::jm, & CPU::ei, & CPU::cm, & CPU::call, & CPU::cpi, & CPU::rst7
 };
+// Initialize the CPU with memory
+CPU::CPU(Memory& memory) : mem(memory){}
 
-CPU::CPU() = default;
-
-// For duplicating CPU object with a deep copy that is memory-safe
-CPU::CPU(const CPU& c)
-	: pc(c.pc), sp(c.sp), in(c.in), out(c.out), extraCycles(c.extraCycles)
-	, B(c.B), C(c.C), D(c.D), E(c.E), H(c.H), L(c.L), A(c.A)
-	, Sign(c.Sign), Zero(c.Zero), AuxCarry(c.AuxCarry), Parity(c.Parity), Carry(c.Carry)
-	, INTE(c.INTE), STOPPED(c.STOPPED), interruptPending(c.interruptPending)
-	, interruptVector(c.interruptVector) {}
-
-CPU::CPU(uint16_t programCounter) : pc(programCounter) {}
-
-// Initialise the CPU
+// Initialise the CPU with Zero values
 void CPU::init() {
 	pc = 0;
 	sp = 0;
@@ -121,6 +111,22 @@ void CPU::writeOut(uint8_t port, uint8_t value) {
 		out[port](value);
 	}
 }
+// Read a byte of memory
+uint8_t CPU::readMem(uint16_t addr) const {
+	return mem.read(addr);
+}
+// Write a byte of memory
+void CPU::writeMem(uint16_t addr, uint8_t data) {
+	mem.write(addr, data);
+}
+// Clear memory
+void CPU::clearMem() {
+	mem.clear();
+}
+// get size of memory
+size_t CPU::getMemSize() {
+	return mem.size();
+}
 // Write a 16-bit value to the BC register pair
 void CPU::writePairB(uint16_t data) {
 	B = (data & 0xFF00) >> 8;
@@ -185,10 +191,4 @@ uint16_t CPU::stackPop() {
 	uint16_t pair = (readMem(sp+1) << 8) | readMem(sp);
 	sp += 2;
 	return pair;
-}
-
-auto CPU::tiedRegisters() const { return std::tie(pc, sp, extraCycles, B, C, D, E, H, L, A, Sign, Zero, AuxCarry, Parity, Carry); }
-
-bool CPU::operator==(CPU const& rhs) const { 
-	return (tiedRegisters() == rhs.tiedRegisters()); 
 }

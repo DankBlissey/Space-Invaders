@@ -1,14 +1,14 @@
+#pragma once
 #include <cstdint>
-#include <array>
 using std::uint8_t;
 using std::uint16_t;
 
+// Interface for implementing Intel 8080 CPU memory
 class Memory {
     public:
-        uint8_t read(uint16_t);
-        void write(uint16_t, uint8_t);
-        void clear();
-        std::size_t size();
-    protected:
-        std::array<uint8_t, 65536> memory = std::array<uint8_t, 65536>();
+        virtual ~Memory() = default;
+        virtual uint8_t read(uint16_t) const = 0;
+        virtual void write(uint16_t, uint8_t) = 0;
+        virtual void clear() = 0;
+        virtual std::size_t size() const = 0;
 };

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Memory.h"
+#include "BasicMemory.h"
 using std::string;
 
 bool loadROM(CPU& cpu, const string& fileName, size_t startAddress = 0) {
@@ -94,12 +94,8 @@ bool runTest(CPU& cpu, const string& file) {
 
 int main()
 {
-	std::unique_ptr<CPU> cpu = std::make_unique<CPU>(CPU());
-	std::unique_ptr<Memory> mem = std::make_unique<Memory>(Memory());
-	cpu->readMem = [&](uint16_t addr){ return mem->read(addr); };
-	cpu->writeMem = [&](uint16_t addr, uint8_t data){ mem->write(addr, data); };
-	cpu->clearMem = [&](){ mem->clear(); };
-	cpu->getMemSize = [&](){ return mem->size(); };
+	std::unique_ptr<BasicMemory> mem = std::make_unique<BasicMemory>(BasicMemory());
+	std::unique_ptr<CPU> cpu = std::make_unique<CPU>(CPU(*mem));
 	runTest(*cpu, "CPU-Test-ROMs/CPUTEST.COM");
 	runTest(*cpu, "CPU-Test-ROMs/TST8080.COM");
 	runTest(*cpu, "CPU-Test-ROMs/8080PRE.COM");

@@ -1,20 +1,33 @@
+#pragma once
 #include "../Intel8080/Memory.h"
+#include <array>
 
-// Intel 8080 CPU with setup for barring writes to ROM and for handling RAM Mirroring
-// Also features a shift register
+// Variant of memory that handles read-only access and RAM mirroring
 class SpaceInvadersMemory : Memory {
-    public: 
-        uint8_t read(uint16_t);
-        void write(uint16_t, uint8_t);
-        void clear();
+    public:
+        SpaceInvadersMemory();
+        uint8_t read(uint16_t) const override;
+        void write(uint16_t, uint8_t) override;
+        void clear() override;
+        std::size_t size() const override;
+
         void loadMem(uint16_t, uint8_t);
     private:
-        const uint16_t romStart {0x0000};
-        const uint16_t romEnd {0x1FFF};
-        const uint16_t ramStart {0x2000};
-        const uint16_t ramEnd {0x23FF};
-        const uint16_t vRamStart {0x2400};
-        const uint16_t vRamEnd {0x3FFF};
-        const uint16_t ramSize {static_cast<uint16_t>(vRamEnd - ramStart + 1)};
-        const uint16_t ramMask {static_cast<uint16_t>(ramSize - 1)};
+        static constexpr uint16_t romSize {0x2000};
+        static constexpr uint16_t ramSize {0x0400};
+        static constexpr uint16_t vRamSize {0x1C00};
+        static constexpr uint16_t ramStart {static_cast<uint16_t>(romSize)};
+        static constexpr uint16_t vRamStart {static_cast<uint16_t>(ramStart + static_cast<uint16_t>(ramSize))};
+        static constexpr uint16_t totalRamSize {static_cast<uint16_t>(ramSize + vRamSize)};
+        static constexpr uint16_t memorySize {static_cast<uint16_t>(totalRamSize + romSize)};
+        static constexpr uint16_t ramMask {static_cast<uint16_t>(memorySize - 1)};
+
+        std::array<uint8_t, romSize> rom {0};
+        std::array<uint8_t, ramSize> ram {0};
+        std::array<uint8_t, vRamSize> vRam {0};
+        
+        std::array<uint8_t*, memorySize> memoryPointers {};
+
+        void buildPointerTable();
+        
 };

@@ -7,7 +7,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/Intel8080/CPU-Test-ROMs
      DESTINATION ${CMAKE_BINARY_DIR}/Intel8080)
 
 # Add source to this project's executable.
-add_executable (Intel8080TestROMs "Intel8080TestROMs.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "Memory.h" "Memory.cpp")
+add_executable (Intel8080TestROMs "Intel8080TestROMs.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "Memory.h" "BasicMemory.h" "BasicMemory.cpp")
 
 Include(FetchContent)
 
@@ -19,7 +19,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(tests "Intel8080Tests.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp")
+add_executable(tests "Intel8080Tests.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp" "Memory.h" "BasicMemory.h" "BasicMemory.cpp")
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 #add_executable(compare "CompareEmulators.cpp" "ExampleEmulator/i8080.h" "ExampleEmulator/i8080.c" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp")
