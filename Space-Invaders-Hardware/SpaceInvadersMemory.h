@@ -3,7 +3,7 @@
 #include <array>
 
 // Variant of memory that handles read-only access and RAM mirroring
-class SpaceInvadersMemory : Memory {
+class SpaceInvadersMemory : public Memory {
     public:
         SpaceInvadersMemory();
         uint8_t read(uint16_t) const override;
