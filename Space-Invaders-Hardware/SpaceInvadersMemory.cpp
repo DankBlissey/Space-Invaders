@@ -43,3 +43,7 @@ void SpaceInvadersMemory::writeRom(uint16_t addr, uint8_t data) {
         rom[addr] = data;
     }
 }
+
+const std::array<uint8_t, SpaceInvadersMemory::vRamSize>& SpaceInvadersMemory::getVram() const {
+    return vRam;
+}

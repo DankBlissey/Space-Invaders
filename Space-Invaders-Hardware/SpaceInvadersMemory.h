@@ -5,6 +5,9 @@
 // Variant of memory that handles read-only access and RAM mirroring
 class SpaceInvadersMemory : public Memory {
     public:
+        static constexpr uint16_t romSize {0x2000};
+        static constexpr uint16_t ramSize {0x0400};
+        static constexpr uint16_t vRamSize {0x1C00};
         SpaceInvadersMemory();
         uint8_t read(uint16_t) const override;
         void write(uint16_t, uint8_t) override;
@@ -12,10 +15,9 @@ class SpaceInvadersMemory : public Memory {
         std::size_t size() const override;
 
         void writeRom(uint16_t, uint8_t);
+
+        const std::array<uint8_t, vRamSize>& getVram() const;
     private:
-        static constexpr uint16_t romSize {0x2000};
-        static constexpr uint16_t ramSize {0x0400};
-        static constexpr uint16_t vRamSize {0x1C00};
         static constexpr uint16_t ramStart {romSize};
         static constexpr uint16_t vRamStart {static_cast<uint16_t>(ramStart + ramSize)};
         static constexpr uint16_t totalRamSize {static_cast<uint16_t>(ramSize + vRamSize)};
