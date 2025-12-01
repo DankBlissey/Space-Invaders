@@ -6,8 +6,12 @@
 file(COPY ${CMAKE_SOURCE_DIR}/Intel8080/CPUTests/CPU-Test-ROMs
      DESTINATION ${CMAKE_BINARY_DIR}/Intel8080)
 
+add_library(Intel8080 CPU.h CPU.cpp CPUOpcodes.cpp OpcodeTableValues.cpp Memory.h)
+target_include_directories(Intel8080 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Add source to this project's executable.
-add_executable (Intel8080TestROMs "CPUTests/Intel8080TestROMs.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "Memory.h" "CPUTests/BasicMemory.h" "CPUTests/BasicMemory.cpp")
+add_executable (Intel8080TestROMs "CPUTests/Intel8080TestROMs.cpp" "CPUTests/BasicMemory.h" "CPUTests/BasicMemory.cpp")
+target_link_libraries(Intel8080TestROMs PRIVATE Intel8080)
 
 Include(FetchContent)
 
@@ -19,8 +23,8 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(tests "CPUTests/Intel8080Tests.cpp" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "CPUTests/TestCPU.h" "CPUTests/TestCPU.cpp" "Memory.h" "CPUTests/BasicMemory.h" "CPUTests/BasicMemory.cpp")
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+add_executable(tests "CPUTests/Intel8080Tests.cpp" "CPUTests/TestCPU.h" "CPUTests/TestCPU.cpp" "CPUTests/BasicMemory.h" "CPUTests/BasicMemory.cpp")
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain Intel8080)
 
 #add_executable(compare "CompareEmulators.cpp" "ExampleEmulator/i8080.h" "ExampleEmulator/i8080.c" "CPU.h" "CPU.cpp" "CPUOpcodes.cpp" "OpcodeTableValues.cpp" "TestCPU.h" "TestCPU.cpp")
 
@@ -32,7 +36,7 @@ include(Catch)
 
 catch_discover_tests(tests)
 
-target_include_directories(Intel8080TestROMs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CPUTests)
-target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CPUTests)
+target_include_directories(Intel8080TestROMs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPUTests)
+target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPUTests)
 
 # TODO: Add tests and install targets if needed.
