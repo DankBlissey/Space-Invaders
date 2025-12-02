@@ -25,12 +25,14 @@ Hardware::Hardware() {
 
 // Steps for one frame of execution
 void Hardware::frame() {
-    unsigned long long halfEndpoint {totalFrames * cyclesPerHalfFrame};
-    unsigned long long endpoint {totalFrames * cyclesPerFrame};
+    unsigned long long cyclesBeforeFrame {totalFrames * cyclesPerFrame};
+    unsigned long long halfEndpoint {cyclesBeforeFrame + cyclesPerHalfFrame};
+    unsigned long long endpoint {cyclesBeforeFrame + cyclesPerFrame};
     while (totalCycles < halfEndpoint) {
         totalCycles += intel8080.cycle();
     }
     updateFrameBuffer();
+    totalFrames++;
     // insert frame rendering here as it allows for cpu init cycles to initialize vRam 
     // but it is before the CPU actually starts changing things in vRam via the interrupt
     intel8080.requestInterrupt(0xCF);

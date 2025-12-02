@@ -14,7 +14,7 @@ class Hardware {
         CPU intel8080 {CPU(memory)};
         ShiftRegister shiftRegister {ShiftRegister()};
         unsigned long long totalCycles {0};
-        unsigned long long totalFrames {1};
+        unsigned long long totalFrames {0};
         static constexpr unsigned long long cyclesPerFrame {33280};
         static constexpr unsigned long long cyclesPerHalfFrame {16640};
         // CPU clock speed is 1.9968 mhz, screen refresh rate is 60hz
