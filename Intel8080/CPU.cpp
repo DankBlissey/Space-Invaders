@@ -1,5 +1,6 @@
 #include "CPU.h"
 #include "OpcodeTableValues.cpp"
+#include <iostream>
 
 // Array of function pointers for each opcode
 const CPU::OpFunc CPU::functptr[256] = {
@@ -62,6 +63,7 @@ void CPU::stopInterrupt() {
 uint8_t CPU::cycle() {
 	extraCycles = 0;
 	if (interruptPending) {
+		std::cout << "Interrupt processed" << std::endl;
 		// Execute the vector
 		(this->*functptr[interruptVector])();
 		// Reset the INTE flip flop

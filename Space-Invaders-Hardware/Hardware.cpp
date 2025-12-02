@@ -38,7 +38,7 @@ Hardware::Hardware() {
 
 bool Hardware::loadROMFile(const std::string& fileName, size_t startAddress) {
     std::ifstream romFile(fileName, std::ios::binary | std::ios::ate);
-	size_t memorySize = memory.size();
+	size_t memorySize = memory->size();
 	if(!romFile.is_open()) {
 		std::cerr << "Error: cannot open ROM file " << fileName << "\n";
 		return false;
@@ -58,7 +58,7 @@ bool Hardware::loadROMFile(const std::string& fileName, size_t startAddress) {
 	}
 
 	for (size_t i = 0; i < buffer.size(); i++) {
-		memory.writeRom(startAddress + static_cast<uint16_t>(i), buffer[i]);
+		memory->writeRom(startAddress + static_cast<uint16_t>(i), buffer[i]);
 	}
 
 	return true;
@@ -86,7 +86,7 @@ void Hardware::frame() {
 // Update the frame buffer with the pixel data of vRam converted to argb8888
 void Hardware::updateFrameBuffer() {
     int index {0};
-    for (uint8_t val : memory.getVram()) {
+    for (uint8_t val : memory->getVram()) {
         const auto& expanded = lookupTable[val];
         for (std::uint32_t val : expanded) {
             frameBuffer[index] = val;

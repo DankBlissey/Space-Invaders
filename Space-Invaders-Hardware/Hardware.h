@@ -2,11 +2,13 @@
 #include "SpaceInvadersMemory.h"
 #include "ShiftRegister.h"
 #include <string>
+#include <memory>
 
 // Class representing all the hardware for space invaders
 class Hardware {
     public:
         Hardware();
+        void setUpPorts();
         void frame();
         void updateFrameBuffer();
         uint8_t inputPort0();
@@ -21,8 +23,8 @@ class Hardware {
         bool selfTest {false}, shipsBitL {false}, shipsBitM {false}, 
         extraShipAtHighOrLowScore {true}, disableCoinInfo {false};
     private:
-        SpaceInvadersMemory memory {SpaceInvadersMemory()};
-        CPU intel8080 {CPU(memory)};
+        std::unique_ptr<SpaceInvadersMemory> memory {std::make_unique<SpaceInvadersMemory>(SpaceInvadersMemory())};
+        CPU intel8080 {CPU(*memory)};
         ShiftRegister shiftRegister {ShiftRegister()};
         unsigned long long totalCycles {0};
         unsigned long long totalFrames {0};
