@@ -63,7 +63,7 @@ void CPU::stopInterrupt() {
 uint8_t CPU::cycle() {
 	extraCycles = 0;
 	if (interruptPending) {
-		std::cout << "Interrupt processed" << std::endl;
+		std::cout << "Interrupt processed. Vector: " << std::hex << static_cast<int>(interruptVector) << std::endl;
 		// Execute the vector
 		(this->*functptr[interruptVector])();
 		// Reset the INTE flip flop
@@ -71,7 +71,7 @@ uint8_t CPU::cycle() {
 		INTE = false;
 		interruptVector = 0x00;
 		// pc is not incremented this time (idea is that it will be pushed onto the stack with rst)
-		return opcodeCycles[currentInstruction] + extraCycles;
+		return opcodeCycles[interruptVector] + extraCycles;
 	}
 	if (STOPPED) {
 		// CPU is halted, return 4 as clock still continues despite the CPU not doing anything
