@@ -7,7 +7,7 @@
     },
     "configurePresets": [
         {
-            "name": "windows-base",
+            "name": "common-base",
             "hidden": true,
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
@@ -15,67 +15,56 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-            },
+            }
+        },
+        {
+            "name": "windows-base",
+            "hidden": true,
+            "inherits": "common-base",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
-            }
-        },
-        {
-            "name": "x64-debug",
-            "displayName": "x64 Debug",
-            "inherits": "windows-base",
+            },
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "x64-release",
-            "displayName": "x64 Release",
-            "inherits": "x64-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-        },
-        {
-            "name": "x86-debug",
-            "displayName": "x86 Debug",
-            "inherits": "windows-base",
-            "architecture": {
-                "value": "x86",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "x86-release",
-            "displayName": "x86 Release",
-            "inherits": "x86-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
             "name": "linux-base",
             "hidden": true,
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-            },
+            "inherits": "common-base",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Linux"
+            }
+        },
+        {
+            "name": "mac-base",
+            "hidden": true,
+            "inherits": "common-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "windows-debug",
+            "displayName": "Windows Debug",
+            "inherits": "windows-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows Release",
+            "inherits": "windows-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
@@ -89,7 +78,23 @@
         {
             "name": "linux-release",
             "displayName": "Linux Release",
-            "inherits": "linux-debug",
+            "inherits": "linux-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "MAC Debug",
+            "inherits": "mac-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "mac-release",
+            "displayName": "MAC Release",
+            "inherits": "mac-base",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -107,24 +112,24 @@
             "description": "Build Linux Release preset"
         },
         {
-            "name": "x64-debug",
-            "configurePreset": "x64-debug",
-            "description": "Build Windows x64 Debug preset"
+            "name": "windows-debug",
+            "configurePreset": "windows-debug",
+            "description": "Build Windows Debug preset"
         },
         {
-            "name": "x64-release",
-            "configurePreset": "x64-release",
-            "description": "Build Windows x64 Release preset"
+            "name": "windows-release",
+            "configurePreset": "windows-release",
+            "description": "Build Windows Release preset"
         },
         {
-            "name": "x86-debug",
-            "configurePreset": "x86-debug",
-            "description": "Build Windows x86 Debug preset"
+            "name": "mac-debug",
+            "configurePreset": "mac-debug",
+            "description": "Build MacOS Debug preset"
         },
         {
-            "name": "x86-release",
-            "configurePreset": "x86-release",
-            "description": "Build Windows x86 Release preset"
+            "name": "mac-release",
+            "configurePreset": "mac-release",
+            "description": "Build MacOS Release preset"
         }
     ]
 }

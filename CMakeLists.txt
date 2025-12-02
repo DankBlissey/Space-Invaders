@@ -3,10 +3,20 @@
 #
 cmake_minimum_required (VERSION 3.26)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+endif()
+
+if(NOT CMAKE_CXX_COMPILER)
+    find_program(CLANG clang)
+    if(CLANG)
+        set(CMAKE_C_COMPILER ${CLANG} CACHE STRING "" FORCE)
+        set(CMAKE_CXX_COMPILER ${CLANG}++ CACHE STRING "" FORCE)
+    endif()
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -20,8 +30,6 @@ enable_testing()
 add_subdirectory ("Intel8080")
 
 add_subdirectory ("Space-Invaders-Hardware")
-
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
     # warning level 4
