@@ -22,7 +22,9 @@ const CPU::OpFunc CPU::functptr[256] = {
 		& CPU::rp, & CPU::popPSW, & CPU::jp, & CPU::di, & CPU::cp, & CPU::pushPSW, & CPU::ori, & CPU::rst6, & CPU::rm, & CPU::sphl, & CPU::jm, & CPU::ei, & CPU::cm, & CPU::call, & CPU::cpi, & CPU::rst7
 };
 // Initialize the CPU with memory
-CPU::CPU(Memory& memory) : mem(memory){}
+CPU::CPU(Memory& memory) : mem(memory){
+	std::cout << "Random instruction in memory " << std::hex << static_cast<int>(readMem(0x18D4)) << std::endl;
+}
 
 // Initialise the CPU with Zero values
 void CPU::init() {
@@ -79,6 +81,7 @@ uint8_t CPU::cycle() {
 	}
 	// Fetch the opcode
 	currentInstruction = readMem(pc);
+	//std::cout << "Current Instruction: " << std::hex << static_cast<int>(currentInstruction) << std::endl;
 	// Increment the program counter
 	pc += opcodeByteLength[currentInstruction];
 	// Execute the opcode
