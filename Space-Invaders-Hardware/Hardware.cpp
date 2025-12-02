@@ -30,6 +30,7 @@ void Hardware::frame() {
     while (totalCycles < halfEndpoint) {
         totalCycles += intel8080.cycle();
     }
+    updateFrameBuffer();
     // insert frame rendering here as it allows for cpu init cycles to initialize vRam 
     // but it is before the CPU actually starts changing things in vRam via the interrupt
     intel8080.requestInterrupt(0xCF);
