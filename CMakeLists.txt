@@ -31,6 +31,11 @@ add_subdirectory ("Intel8080")
 
 add_subdirectory ("Space-Invaders-Hardware")
 
+find_package(SDL3 CONFIG REQUIRED)
+
+add_executable(SpaceInvaders SpaceInvaders.cpp)
+target_link_libraries(SpaceInvaders PRIVATE SDL3::SDL3 Space-Invaders-Hardware)
+
 if (MSVC)
     # warning level 4
     add_compile_options(/W4 /WX /external:W3 /W44365)

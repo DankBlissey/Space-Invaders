@@ -8,7 +8,16 @@ class Hardware {
         Hardware();
         void frame();
         void updateFrameBuffer();
+        uint8_t inputPort0();
+        uint8_t inputPort1();
+        uint8_t inputPort2();
         std::array<std::uint32_t, 224*256> frameBuffer {};
+        bool fire {}, left {}, right {}, credit {}, twoPlayerStart {}, onePlayerStart {}, 
+        playerOneShot {}, playerOneLeft {}, playerOneRight {}, tilt {}, 
+        playerTwoShot {}, playerTwoLeft {}, playerTwoRight {};
+
+        bool selfTest {false}, shipsBitL {false}, shipsBitM {false}, 
+        extraShipAtHighOrLowScore {true}, disableCoinInfo {false};
     private:
         SpaceInvadersMemory memory {SpaceInvadersMemory()};
         CPU intel8080 {CPU(memory)};

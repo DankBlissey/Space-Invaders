@@ -1,5 +1,4 @@
-find_package(SDL3 CONFIG REQUIRED)
+add_library(Space-Invaders-Hardware Hardware.h Hardware.cpp ShiftRegister.h ShiftRegister.cpp SpaceInvadersMemory.h SpaceInvadersMemory.cpp)
+target_include_directories(Space-Invaders-Hardware PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(SpaceInvaders "SpaceInvaders.cpp" "Hardware.h" "Hardware.cpp" "ShiftRegister.h" "ShiftRegister.cpp" "SpaceInvadersMemory.h" "SpaceInvadersMemory.cpp")
-
-target_link_libraries(SpaceInvaders PRIVATE SDL3::SDL3 Intel8080)
+target_link_libraries(Space-Invaders-Hardware PRIVATE Intel8080)

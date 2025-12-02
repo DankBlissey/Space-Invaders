@@ -16,9 +16,20 @@ constexpr std::array<std::array<std::uint32_t,8>,256> lookupTable {buildLookupTa
 // Initialize object with relevant output port functions
 Hardware::Hardware() {
     // Out Port 2 specifies the shift offset
-    intel8080.setOutPort(2, [&](uint8_t offset){ shiftRegister.setOffset(offset); }); 
+    intel8080.setOutPort(2, [&](uint8_t offset){ shiftRegister.setOffset(offset); });
+    // Out Port 3 specifies certain discrete sounds, not added yet
+    intel8080.setOutPort(3, [&](uint8_t soundData) {});
     // Out Port 4 shift a new 8 bit value into the register
-    intel8080.setOutPort(4, [&](uint8_t shiftData){ shiftRegister.shiftValueIn(shiftData); }); 
+    intel8080.setOutPort(4, [&](uint8_t shiftData){ shiftRegister.shiftValueIn(shiftData); });
+    // Out Port 5 specifis other discrete sounds, not added yet
+    intel8080.setOutPort(5, [&](uint8_t soundData){});
+    // Out Port 6 resets the cpu, not added yet
+    intel8080.setOutPort(6, [&](uint8_t data){});
+
+    // In Ports 0, 1, and 2 specify inputs and settings for the cabinet
+    intel8080.setInPort(0, [&](){ return inputPort0(); });
+    intel8080.setInPort(1, [&](){ return inputPort1(); });
+    intel8080.setInPort(2, [&](){ return inputPort2(); });
     // In Port 3 gets the shifted value from the register
     intel8080.setInPort(3, [&](){ return shiftRegister.readShiftRegister(); });
 }
@@ -52,4 +63,33 @@ void Hardware::updateFrameBuffer() {
             index++;
         }
     }
+}
+
+uint8_t Hardware::inputPort0() {
+    return (right << 6) |
+        (left << 5) |
+        (fire << 4) |
+        (selfTest) |
+        (0b00001110);
+}
+
+uint8_t Hardware::inputPort1() {
+    return (playerOneRight << 6) |
+        (playerOneLeft << 5) |
+        (playerOneShot << 4) |
+        (onePlayerStart << 2) |
+        (twoPlayerStart << 1) |
+        (credit) |
+        (0b00001000);
+}
+
+uint8_t Hardware::inputPort2() {
+    return (disableCoinInfo << 7) |
+        (playerTwoRight << 6) |
+        (playerTwoLeft << 5) |
+        (playerTwoShot << 4) |
+        (extraShipAtHighOrLowScore << 3) |
+        (tilt << 2) |
+        (shipsBitM << 1) |
+        (shipsBitL);
 }
