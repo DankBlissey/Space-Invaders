@@ -23,9 +23,9 @@ class Hardware {
         bool selfTest {false}, shipsBitL {false}, shipsBitM {false}, 
         extraShipAtHighOrLowScore {true}, disableCoinInfo {false};
     private:
-        std::unique_ptr<SpaceInvadersMemory> memory {std::make_unique<SpaceInvadersMemory>(SpaceInvadersMemory())};
-        CPU intel8080 {CPU(*memory)};
-        ShiftRegister shiftRegister {ShiftRegister()};
+        std::unique_ptr<SpaceInvadersMemory> memory {std::make_unique<SpaceInvadersMemory>()};
+        CPU intel8080 {*memory};
+        ShiftRegister shiftRegister {};
         unsigned long long totalCycles {0};
         unsigned long long totalFrames {0};
         static constexpr unsigned long long cyclesPerFrame {33280};

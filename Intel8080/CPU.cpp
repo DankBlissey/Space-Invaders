@@ -1,6 +1,5 @@
 #include "CPU.h"
 #include "OpcodeTableValues.cpp"
-#include <iostream>
 
 // Array of function pointers for each opcode
 const CPU::OpFunc CPU::functptr[256] = {
@@ -22,9 +21,7 @@ const CPU::OpFunc CPU::functptr[256] = {
 		& CPU::rp, & CPU::popPSW, & CPU::jp, & CPU::di, & CPU::cp, & CPU::pushPSW, & CPU::ori, & CPU::rst6, & CPU::rm, & CPU::sphl, & CPU::jm, & CPU::ei, & CPU::cm, & CPU::call, & CPU::cpi, & CPU::rst7
 };
 // Initialize the CPU with memory
-CPU::CPU(Memory& memory) : mem(memory){
-	std::cout << "Random instruction in memory " << std::hex << static_cast<int>(readMem(0x18D4)) << std::endl;
-}
+CPU::CPU(Memory& memory) : mem(memory){}
 
 // Initialise the CPU with Zero values
 void CPU::init() {
@@ -65,7 +62,6 @@ void CPU::stopInterrupt() {
 uint8_t CPU::cycle() {
 	extraCycles = 0;
 	if (interruptPending) {
-		std::cout << "Interrupt processed. Vector: " << std::hex << static_cast<int>(interruptVector) << std::endl;
 		// Execute the vector
 		(this->*functptr[interruptVector])();
 		// Reset the INTE flip flop
@@ -81,7 +77,6 @@ uint8_t CPU::cycle() {
 	}
 	// Fetch the opcode
 	currentInstruction = readMem(pc);
-	//std::cout << "Current Instruction: " << std::hex << static_cast<int>(currentInstruction) << std::endl;
 	// Increment the program counter
 	pc += opcodeByteLength[currentInstruction];
 	// Execute the opcode
