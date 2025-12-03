@@ -181,7 +181,9 @@ int main( int argc, char* args[]) {
                 handleInput(*spaceInvadersHardware, e);
             }
         }
+        // Run one frame's worth of emulation and interrupts
         spaceInvadersHardware->frame();
+        // calculate render target size based on window size
         int renderW, renderH;
         SDL_GetRenderOutputSize(renderer, &renderW, &renderH);
 
@@ -195,12 +197,6 @@ int main( int argc, char* args[]) {
             targetW = maxW;
             targetH = targetW * (3.0f/4.0f);
         }
-
-        //int scaleX = (int)(targetW / screenHeight);
-        //int scaleY = (int)(targetH / screenWidth);
-        //int scale = SDL_min(scaleX, scaleY);
-        //targetW = screenHeight * scale;
-        //targetH = screenWidth * scale;
 
         SDL_FRect dstRect;
         dstRect.w = targetW;
