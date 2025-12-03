@@ -7,7 +7,6 @@
 // Class representing all the hardware for space invaders
 class Hardware {
     public:
-        Hardware();
         void setUpPorts();
         void frame();
         void updateFrameBuffer();
@@ -15,10 +14,11 @@ class Hardware {
         uint8_t inputPort1();
         uint8_t inputPort2();
         bool loadROMFile(const std::string&, size_t = 0);
+        bool getCredit();
         std::array<std::uint32_t, 224*256> frameBuffer {};
-        bool fire {}, left {}, right {}, credit {}, twoPlayerStart {}, onePlayerStart {}, 
-        playerOneShot {}, playerOneLeft {}, playerOneRight {}, tilt {}, 
-        playerTwoShot {}, playerTwoLeft {}, playerTwoRight {};
+        bool fire {false}, left {false}, right {false}, credit {false}, twoPlayerStart {false}, onePlayerStart {false}, 
+        playerOneShot {false}, playerOneLeft {false}, playerOneRight {false}, tilt {false}, 
+        playerTwoShot {false}, playerTwoLeft {false}, playerTwoRight {false};
 
         bool selfTest {false}, shipsBitL {false}, shipsBitM {false}, 
         extraShipAtHighOrLowScore {true}, disableCoinInfo {false};

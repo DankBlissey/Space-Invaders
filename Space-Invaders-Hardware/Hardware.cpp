@@ -15,8 +15,7 @@ constexpr std::array<std::array<uint32_t, 8>, 256> buildLookupTable() {
 
 constexpr std::array<std::array<std::uint32_t,8>,256> lookupTable {buildLookupTable()};
 
-// Initialize object with relevant output port functions
-Hardware::Hardware() {
+void Hardware::setUpPorts() {
     // Out Port 2 specifies the shift offset
     intel8080.setOutPort(2, [&](uint8_t offset){ shiftRegister.setOffset(offset); });
     // Out Port 3 specifies certain discrete sounds, not added yet
@@ -95,22 +94,30 @@ void Hardware::updateFrameBuffer() {
     }
 }
 
+bool Hardware::getCredit() {
+    bool value = credit;
+    credit = false;
+    return value;
+}
+
 uint8_t Hardware::inputPort0() {
     return (right << 6) |
         (left << 5) |
         (fire << 4) |
-        (selfTest) |
+        (selfTest << 0) |
         (0b00001110);
 }
 
 uint8_t Hardware::inputPort1() {
-    return (playerOneRight << 6) |
+    uint8_t outputByte = (0 << 7) |
+        (playerOneRight << 6) |
         (playerOneLeft << 5) |
         (playerOneShot << 4) |
+        (1 << 3) |
         (onePlayerStart << 2) |
         (twoPlayerStart << 1) |
-        (credit) |
-        (0b00001000);
+        (getCredit() << 0);
+    return outputByte;
 }
 
 uint8_t Hardware::inputPort2() {
@@ -121,5 +128,5 @@ uint8_t Hardware::inputPort2() {
         (extraShipAtHighOrLowScore << 3) |
         (tilt << 2) |
         (shipsBitM << 1) |
-        (shipsBitL);
+        (shipsBitL << 0);
 }

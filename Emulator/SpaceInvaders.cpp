@@ -8,6 +8,8 @@
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_pixels.h"
 #include "SDL3/SDL_render.h"
+#include "SDL3/SDL_surface.h"
+#include "SDL3/SDL_video.h"
 
 constexpr int screenWidth {256};
 constexpr int screenHeight {224};
@@ -16,8 +18,10 @@ constexpr int screenFPS {60};
 
 constexpr std::uint64_t nsPerFrame = 1000000000 / screenFPS;
 
-constexpr int adjustedHeight {screenWidth * 4};
+constexpr int adjustedHeight {screenWidth * 3};
 constexpr int adjustedWidth {screenHeight * 3};
+
+bool quit{false};
 
 SDL_Window* window {nullptr};
 
@@ -30,7 +34,7 @@ bool init() {
         SDL_Log( "SDL could not initialize! SDL error: %s\n", SDL_GetError());
         return false;
     }
-    if (window = SDL_CreateWindow("Space Invaders", screenHeight, screenWidth, 0); window == nullptr) {
+    if (window = SDL_CreateWindow("Space Invaders", screenHeight, screenWidth, SDL_WINDOW_RESIZABLE); window == nullptr) {
         SDL_Log("Window could not be created! SDL error: %s\n", SDL_GetError());
         return false;
     }
@@ -44,6 +48,10 @@ bool init() {
     }
     if (videoTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight); videoTexture == nullptr) {
         SDL_Log("Texture could not be created! SDL error: %s\n", SDL_GetError());
+        return false;
+    }
+    if (SDL_SetTextureScaleMode(videoTexture, SDL_SCALEMODE_NEAREST) == false) {
+        SDL_Log("Could not enable nearest neighbour scaling SDL error: %s\n", SDL_GetError());
         return false;
     }
     return true;
@@ -61,6 +69,9 @@ void close() {
 void handleInput(Hardware& hardware, SDL_Event& e) {
     if (e.type == SDL_EVENT_KEY_DOWN) {
         switch (e.key.key) {
+            case SDLK_ESCAPE:
+                quit = true;
+                break;
             case SDLK_A:
                 hardware.left = true;
                 hardware.playerOneLeft = true;
@@ -109,9 +120,6 @@ void handleInput(Hardware& hardware, SDL_Event& e) {
                 hardware.fire = false;
                 hardware.playerOneShot = false;
                 break;
-            case SDLK_C:
-                hardware.credit = false;
-                break;
             case SDLK_1:
                 hardware.onePlayerStart = false;
                 break;
@@ -135,7 +143,8 @@ void handleInput(Hardware& hardware, SDL_Event& e) {
 }
 
 int main( int argc, char* args[]) {
-    std::unique_ptr<Hardware> spaceInvadersHardware = std::make_unique<Hardware>(Hardware());
+    std::unique_ptr<Hardware> spaceInvadersHardware = std::make_unique<Hardware>();
+    spaceInvadersHardware->setUpPorts();
     if (init() == false) {
         SDL_Log("Unable to initialize program\n");
         return 1;
@@ -156,7 +165,6 @@ int main( int argc, char* args[]) {
         SDL_Log("Unable to load invaders.e1");
         return 1;
     }
-    bool quit(false);
     SDL_Event e;
     SDL_zero(e);
     bool vsyncEnabled {true};
@@ -174,9 +182,34 @@ int main( int argc, char* args[]) {
             }
         }
         spaceInvadersHardware->frame();
+        int renderW, renderH;
+        SDL_GetRenderOutputSize(renderer, &renderW, &renderH);
+
+        float maxW = renderW;
+        float maxH = renderH;
+
+        float targetH = maxH;
+        float targetW = targetH * (4.0f/3.0f);
+
+        if (targetW > maxW) {
+            targetW = maxW;
+            targetH = targetW * (3.0f/4.0f);
+        }
+
+        //int scaleX = (int)(targetW / screenHeight);
+        //int scaleY = (int)(targetH / screenWidth);
+        //int scale = SDL_min(scaleX, scaleY);
+        //targetW = screenHeight * scale;
+        //targetH = screenWidth * scale;
+
+        SDL_FRect dstRect;
+        dstRect.w = targetW;
+        dstRect.h = targetH;
+        dstRect.x = (renderW - targetW) * 0.5f;
+        dstRect.y = (renderH - targetH) * 0.5f;
         SDL_UpdateTexture(videoTexture, nullptr, spaceInvadersHardware->frameBuffer.data(), 256 * sizeof(std::uint32_t));
         SDL_RenderClear(renderer);
-        SDL_RenderTextureRotated(renderer, videoTexture, nullptr, nullptr, -90.0, nullptr, SDL_FLIP_NONE);
+        SDL_RenderTextureRotated(renderer, videoTexture, nullptr, &dstRect, -90.0, nullptr, SDL_FLIP_NONE);
         SDL_RenderPresent(renderer);
         renderingNS = capTimer.getTicksNS();
         if (renderingNS < nsPerFrame) {
