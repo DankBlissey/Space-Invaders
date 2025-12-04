@@ -47,7 +47,7 @@
             "inherits": "common-base",
             "condition": {
                 "type": "equals",
-                "lhs": "${hostSystemName",
+                "lhs": "${hostSystemName}",
                 "rhs": "Darwin"
             }
         },
