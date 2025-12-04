@@ -160,6 +160,8 @@ int main( int argc, char* args[]) {
     LTimer capTimer;
     std::uint64_t renderingNS {0};
     std::stringstream timeText;
+
+    //Main rendering loop
     while(quit == false) {
         capTimer.start();
         while(SDL_PollEvent(&e) == true) {

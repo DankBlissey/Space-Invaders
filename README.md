@@ -1,5 +1,5 @@
 # SpaceInvaders
-### This is an emulator for the space invaders arcade cabinet, written in C++
+### This is an emulator for the space invaders arcade cabinet, written in C++23
 To build it, you will need CMake Version 3.20 or higher, as well as Ninja. 
 
 ## Instructions for how to run:
