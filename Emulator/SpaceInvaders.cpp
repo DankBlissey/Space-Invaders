@@ -187,8 +187,8 @@ int main( int argc, char* args[]) {
         int renderW, renderH;
         SDL_GetRenderOutputSize(renderer, &renderW, &renderH);
 
-        float maxW = renderW;
-        float maxH = renderH;
+        float maxW = renderH;
+        float maxH = renderW;
 
         float targetH = maxH;
         float targetW = targetH * (4.0f/3.0f);
