@@ -9,6 +9,8 @@ file(COPY ${CMAKE_SOURCE_DIR}/Intel8080/CPUTests/CPU-Test-ROMs
 add_library(Intel8080 CPU.h CPU.cpp CPUOpcodes.cpp OpcodeTableValues.cpp Memory.h)
 target_include_directories(Intel8080 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+set_property(TARGET Intel8080 PROPERTY CXX_STANDARD 23)
+
 # Add source to this project's executable.
 add_executable (Intel8080TestROMs "CPUTests/Intel8080TestROMs.cpp" "CPUTests/BasicMemory.h" "CPUTests/BasicMemory.cpp")
 target_link_libraries(Intel8080TestROMs PRIVATE Intel8080)
