@@ -12,4 +12,4 @@ add_executable(SpaceInvaders SpaceInvaders.cpp LTimer.h LTimer.cpp)
 
 set_property(TARGET SpaceInvaders PROPERTY CXX_STANDARD 23)
 
-target_link_libraries(SpaceInvaders PRIVATE SDL3::SDL3 SDL3_image::SDL3_image-static Space-Invaders-Hardware)
+target_link_libraries(SpaceInvaders PRIVATE SDL3::SDL3 SDL3_image::SDL3_image Space-Invaders-Hardware)
