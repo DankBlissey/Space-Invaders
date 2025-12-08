@@ -36,7 +36,7 @@ constexpr std::array<uint32_t, 224*256> buildColourOverlay() {
     }
 
     for (int x = 0; x < 16; x++) {
-        for (int y = 0; y < 136; y++) {
+        for (int y = 26; y < 136; y++) {
             table[y * 256 + x] = 0xD042F56F;
         }
     }

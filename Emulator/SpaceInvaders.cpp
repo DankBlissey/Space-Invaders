@@ -59,7 +59,7 @@ bool init() {
         SDL_Log("Could not enable nearest neighbour scaling! SDL error: %s\n", SDL_GetError());
         return false;
     }
-    if (backgroundTexture = IMG_LoadTexture(renderer, "invadersBitMap.bmp"); backgroundTexture == nullptr) {
+    if (backgroundTexture = IMG_LoadTexture(renderer, "invadersBitMapDark.bmp"); backgroundTexture == nullptr) {
         SDL_Log("Background could not be loaded! %s\n", SDL_GetError());
         return false;
     }

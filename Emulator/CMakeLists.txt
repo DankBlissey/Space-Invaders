@@ -5,7 +5,7 @@ find_package(SDL3_image CONFIG REQUIRED)
 file(COPY ${CMAKE_SOURCE_DIR}/SpaceInvadersROM
      DESTINATION ${CMAKE_BINARY_DIR}/Emulator)
 
-file(COPY ${CMAKE_SOURCE_DIR}/Media/invadersBitMap.bmp
+file(COPY ${CMAKE_SOURCE_DIR}/Media/invadersBitMapDark.bmp
      DESTINATION ${CMAKE_BINARY_DIR}/Emulator)
 
 add_executable(SpaceInvaders SpaceInvaders.cpp LTimer.h LTimer.cpp)
