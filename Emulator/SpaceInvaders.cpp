@@ -1,7 +1,9 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_init.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include "Hardware.h"
+#include "SimpleSoundChip.h"
 #include "LTimer.h"
 #include <sstream>
 #include <memory>
@@ -35,7 +37,7 @@ SDL_Texture* backgroundTexture {nullptr};
 constexpr float imageScale {775.0 / 572.0};
 
 bool init() {
-    if (SDL_Init(SDL_INIT_VIDEO) == false) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == false) {
         SDL_Log( "SDL could not initialize! SDL error: %s\n", SDL_GetError());
         return false;
     }
@@ -144,12 +146,16 @@ void handleInput(Hardware& hardware, SDL_Event& e) {
 }
 
 int main( int argc, char* args[]) {
-    std::unique_ptr<Hardware> spaceInvadersHardware = std::make_unique<Hardware>();
-    spaceInvadersHardware->setUpPorts();
     if (init() == false) {
         SDL_Log("Unable to initialize program\n");
         return 1;
     }
+    std::unique_ptr<SimpleSoundChip> soundChip = std::make_unique<SimpleSoundChip>();
+    if (soundChip->init()) {
+        soundChip->soundEnabled = true;
+    }
+    std::unique_ptr<Hardware> spaceInvadersHardware = std::make_unique<Hardware>(*soundChip);
+    spaceInvadersHardware->setUpPorts();
     if (!spaceInvadersHardware->loadROMFile("SpaceInvadersROM/9316b-0869_m739h.h1")) {
         SDL_Log("Unable to load invaders.h1");
         return 1;

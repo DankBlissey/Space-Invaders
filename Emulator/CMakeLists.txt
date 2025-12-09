@@ -8,7 +8,10 @@ file(COPY ${CMAKE_SOURCE_DIR}/SpaceInvadersROM
 file(COPY ${CMAKE_SOURCE_DIR}/Media/invadersBitMapDark.bmp
      DESTINATION ${CMAKE_BINARY_DIR}/Emulator)
 
-add_executable(SpaceInvaders SpaceInvaders.cpp LTimer.h LTimer.cpp)
+file(COPY ${CMAKE_SOURCE_DIR}/Audio
+     DESTINATION ${CMAKE_BINARY_DIR}/Emulator)
+
+add_executable(SpaceInvaders SpaceInvaders.cpp LTimer.h LTimer.cpp SimpleSoundChip.h SimpleSoundChip.cpp)
 
 set_property(TARGET SpaceInvaders PROPERTY CXX_STANDARD 23)
 

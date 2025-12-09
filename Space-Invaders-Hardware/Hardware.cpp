@@ -47,15 +47,17 @@ constexpr std::array<std::array<std::uint32_t,8>,256> lookupTable {buildLookupTa
 
 constexpr std::array<uint32_t, 224*256> colourOverlay {buildColourOverlay()};
 
+Hardware::Hardware(SoundChip& chip) : soundChip(chip) {}
+
 void Hardware::setUpPorts() {
     // Out Port 2 specifies the shift offset
     intel8080.setOutPort(2, [&](uint8_t offset){ shiftRegister.setOffset(offset); });
     // Out Port 3 specifies certain discrete sounds, not added yet
-    intel8080.setOutPort(3, [&](uint8_t soundData) {});
+    intel8080.setOutPort(3, [&](uint8_t soundData) { soundChip.port3(soundData); });
     // Out Port 4 shift a new 8 bit value into the register
     intel8080.setOutPort(4, [&](uint8_t shiftData){ shiftRegister.shiftValueIn(shiftData); });
     // Out Port 5 specifis other discrete sounds, not added yet
-    intel8080.setOutPort(5, [&](uint8_t soundData){});
+    intel8080.setOutPort(5, [&](uint8_t soundData){ soundChip.port5(soundData); });
     // Out Port 6 resets the cpu, not added yet
     intel8080.setOutPort(6, [&](uint8_t data){});
 

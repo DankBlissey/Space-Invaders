@@ -1,12 +1,15 @@
+#pragma once
 #include "../Intel8080/CPU.h"
 #include "SpaceInvadersMemory.h"
 #include "ShiftRegister.h"
+#include "SoundChip.h"
 #include <string>
 #include <memory>
 
 // Class representing all the hardware for space invaders
 class Hardware {
     public:
+        Hardware(SoundChip&);
         void setUpPorts();
         void frame();
         void updateFrameBuffer();
@@ -26,6 +29,7 @@ class Hardware {
         std::unique_ptr<SpaceInvadersMemory> memory {std::make_unique<SpaceInvadersMemory>()};
         CPU intel8080 {*memory};
         ShiftRegister shiftRegister {};
+        SoundChip& soundChip;
         unsigned long long totalCycles {0};
         unsigned long long totalFrames {0};
         static constexpr unsigned long long cyclesPerFrame {33280};
