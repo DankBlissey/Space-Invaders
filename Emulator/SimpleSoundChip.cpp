@@ -11,7 +11,7 @@ static bool initializeSound(const char* fname, Sound* sound, SDL_AudioDeviceID a
 
     sound->stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL);
     if (!sound->stream) {
-        SDL_Log("Couldn't open audio stream for %s: &s\n", fname, SDL_GetError());
+        SDL_Log("Couldn't open audio stream for '%s': %s\n", fname, SDL_GetError());
         return false;
     }
     SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(sound->stream));
