@@ -1,4 +1,4 @@
-# SpaceInvaders
+# Invaders From Outer Space
 ### This is an emulator for the Space Invaders arcade cabinet, written in C++  
 To build it, you will need CMake Version 3.26 or higher, as well as Ninja.  
 It uses vcpkg for package management, SDL3 for rendering and audio, and Catch2 for automated testing.   
