@@ -1,22 +1,27 @@
 # Invaders From Outer Space
-### This is an emulator for the Space Invaders arcade cabinet, written in C++  
-To build it, you will need CMake Version 3.26 or higher, as well as Ninja.  
+### This is an emulator for the Space Invaders arcade cabinet, written in C++   
 It uses vcpkg for package management, SDL3 for rendering and audio, and Catch2 for automated testing.   
 It features an accurate, cycle-counting, Intel 8080 CPU emulator  
 
 ![](Media/invadersGifNew.gif)  
 
-## Install  
-As the project is still ongoing, I have not released any binaries, so for now, you will have to settle with building it from source.  
-Once I am satisfied with the state of the emulator, I will make a full release with binaries for different platforms. 
+## Install instructions
+### Beta Version 1.0.0 is here!  
+Go to the releases page and you will see it, it includes zip files for windows and linux binary releases.  
+- Extract the contents of the zip file
+- Add your ROM files to the folder `SpaceInvadersROM` (file names should be: `9316b-0869_m739h.h1`, `9316b-0856_m739g.g1`, `9316b-0855_m739f.f1`, `9316b-0854_m739e.e1`)  
+- Add your audio files `0.wav`-`9.wav` to the folder `Audio`  (This is optional, the emulator will run fine without audio files)  
+- Run the executable `InvadersFromOuterSpace.exe`  
 
-## Build Instructions
-vcpkg is already included as a git submodule so all you need to do is:  
+If you would rather not use binaries from a (potentially) untrusted source, that is fully understandable, and you can build the program from the source code yourself:  
+## Build From Source Instructions
+To build the program, you will need CMake Version 3.26 or higher, as well as Ninja.  
+vcpkg is already included as a git submodule, so you don't need it to be installed on your machine beforehand.  
 
 - `git clone --recursive https://github.com/DankBlissey/Space-Invaders.git`  
 - `cd Space-Invaders`  
 - Add your ROM files to the `SpaceInvadersROM` folder. Refer to the `readme.txt` file in the `SpaceInvadersROM` folder for the file naming format  
-- Add your audio files to the `Audio` folder. The files should be 0.wav-9.wav  
+- Add your audio files to the `Audio` folder. The files should be `0.wav`-`9.wav`  
 - `cmake --list-presets` which will show you which presets are available (a release and debug preset for your platform)  
 - `cmake --preset <chosen preset>`  
 - `cmake --build --preset <chosen preset>`
@@ -30,7 +35,7 @@ Just run the .exe file to play!
 
 ### I cannot include the ROM or audio files within the project as they are copyrighted material. You will have to source these yourself and do so at your own risk.  
 
-### Other buildable executables include `Intel8080TextROMs.exe` which is a program to run various CPU test ROMs to verify CPU accurate behaviour and `tests.exe` which are automated tests for the CPU opcodes written using the catch2 library.  
+### Other buildable executables include `Intel8080TestROMs.exe` which is a program to run various CPU test ROMs to verify CPU accurate behaviour and `tests.exe` which are automated tests for the CPU opcodes written using the catch2 library.  
 
 ## Controls:
 C = add credit  
@@ -44,10 +49,10 @@ esc = quit
 
 ## State of project:
 Currently, the emulator is running well, in a dynamically resizable window with a background and colour overlay, and with audio.  
-Audio volume is currently quite inconsistent; some sounds are far too loud.  
+Audio volume may be inconsistent.  
 ### Things to add:  
 - More consistent audio volume  
-- Visual effects: CRT scanlines, glow effect, etc  (?)
+- Visual effects: CRT scanlines, glow effect, etc  (?)  
 - GUI for setting up ROM and Audio files (?)  
 - Windows installer (?)  
 - Controller support (?)  
