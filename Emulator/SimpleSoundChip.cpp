@@ -114,3 +114,16 @@ void SimpleSoundChip::port5(uint8_t soundData) {
     }
 }
 
+void SimpleSoundChip::destroyAudioStreams() {
+    SDL_DestroyAudioStream(ufoSound.stream);
+    SDL_DestroyAudioStream(shotSound.stream);
+    SDL_DestroyAudioStream(playerDieSound.stream);
+    SDL_DestroyAudioStream(invaderDieSound.stream);
+    SDL_DestroyAudioStream(extraLifeSound.stream);
+    SDL_DestroyAudioStream(fleetMovement1Sound.stream);
+    SDL_DestroyAudioStream(fleetMovement2Sound.stream);
+    SDL_DestroyAudioStream(fleetMovement3Sound.stream);
+    SDL_DestroyAudioStream(fleetMovement4Sound.stream);
+    SDL_DestroyAudioStream(ufoHitSound.stream);
+}
+

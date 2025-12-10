@@ -11,10 +11,11 @@ typedef struct Sound {
 
 class SimpleSoundChip : public SoundChip {
     public:
+        void destroyAudioStreams();
         bool init();
 
-        void port3(uint8_t);
-        void port5(uint8_t);
+        void port3(uint8_t) override;
+        void port5(uint8_t) override;
 
         void playSound(Sound&);
         void playRepeatingSound(Sound&);
